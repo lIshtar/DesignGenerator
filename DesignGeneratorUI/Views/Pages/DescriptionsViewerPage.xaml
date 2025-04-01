@@ -1,0 +1,34 @@
+﻿<Page x:Class="DesignGeneratorUI.Views.Pages.DescriptionsViewerPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:DesignGeneratorUI.Views.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="DescriptionsViewerPage">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Таблица данных -->
+        <DataGrid Grid.Row="0" ItemsSource="{Binding DataItems}" AutoGenerateColumns="False"
+                  CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Название" Binding="{Binding Title}" Width="*"/>
+                <DataGridTextColumn Header="Промпт" Binding="{Binding Prompt}" Width="2*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Кнопка -->
+        <Button Grid.Row="1" Content="Приступить к созданию" Padding="10"
+                Command="{Binding StartCreationCommand}" Height="40" Width="200"
+                HorizontalAlignment="Right" Margin="10"/>
+        <Button Grid.Row="1" Content="Назад" Padding="10"
+                Command="{Binding StartCreationCommand}" Height="40" Width="200"
+                HorizontalAlignment="Left" Margin="10"/>
+    </Grid>
+</Page>

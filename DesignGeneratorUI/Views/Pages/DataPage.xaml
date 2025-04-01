@@ -1,0 +1,35 @@
+﻿<Page x:Class="DesignGeneratorUI.Views.Pages.DataPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Экспорт данных"
+      Background="#F0F0F0">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Выбор пути сохранения файла -->
+        <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+            <TextBox Width="300" Text="{Binding SavePath}" IsReadOnly="True" Margin="0 0 10 0"/>
+            <Button Content="Обзор..." Padding="5" Command="{Binding BrowseCommand}"/>
+        </StackPanel>
+
+        <!-- Кнопка экспорта -->
+        <Button Grid.Row="1"
+                Content="Экспорт в Excel"
+                HorizontalAlignment="Left"
+                Padding="10"
+                Margin="0 10 0 0"
+                Command="{Binding ExportToExcelCommand}"/>
+
+        <!-- Таблица данных -->
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding DataList}"
+                  AutoGenerateColumns="True"
+                  Margin="0 10 0 0"
+                  IsReadOnly="True"/>
+    </Grid>
+</Page>

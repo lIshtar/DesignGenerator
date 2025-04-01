@@ -1,0 +1,167 @@
+﻿<Page x:Class="DesignGeneratorUI.Views.Pages.MainInteractionPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+      mc:Ignorable="d"
+      xmlns:converters="clr-namespace:DesignGeneratorUI.Converters"
+      xmlns:helpers="clr-namespace:DesignGeneratorUI.Helpers"
+      d:DesignHeight="500" d:DesignWidth="900">
+
+    <Page.Resources>
+        <converters:MessageBackgroundConverter x:Key="MessageBackgroundConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:BoolToGridColumnConverter x:Key="BoolToGridColumnConverter"/>
+        <converters:BoolToGridColumnInvertedConverter x:Key="BoolToGridColumnInvertedConverter"/>
+        <converters:BoolToHorizontalAlignmentConverter x:Key="BoolToHorizontalAlignmentConverter"/>
+
+        <!-- Современный стиль для CheckBox с круглым дизайном -->
+        <Style x:Key="CustomRoundCheckBox" TargetType="CheckBox">
+            
+
+            <!-- Определяем шаблон для CheckBox -->
+            <Style.Setters>
+                <Setter Property="Width" Value="30"/>
+                <Setter Property="Height" Value="30"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="#0078D7"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+            
+                <Setter Property="Foreground" Value="#0078D7"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="CheckBox">
+                            <Grid Width="30" Height="30">
+                                <!-- Создаем круглый чекбокс -->
+                                <Ellipse Name="Circle" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2" Fill="Transparent"/>
+
+                                <!-- Галочка, которая будет отображаться, когда чекбокс выбран -->
+                                <Path Name="CheckMark" Visibility="Collapsed" Data="M 0 0 L 10 10 L 24 0" StrokeThickness="2" Stroke="#28A745" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <!-- Показывать галочку, когда чекбокс выбран -->
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                                    <Setter TargetName="Circle" Property="Fill" Value="#28A745"/>
+                                    <Setter TargetName="Circle" Property="Stroke" Value="#28A745"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
+    </Page.Resources>
+
+    
+
+    <Grid Background="#F4F4F4" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <!-- Чат растягивается -->
+            <RowDefinition Height="Auto" />
+            <!-- Кнопки внизу -->
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Левая часть: Чат с AI-ботом -->
+        <Border Grid.Column="0" Grid.Row="0" Padding="15" Background="White" CornerRadius="10" BorderBrush="#CCC" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="🤖 AI-бот" FontSize="22" FontWeight="Bold" Foreground="#333" Margin="10,0,0,10"/>
+
+                <!-- Контейнер для сообщений -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Messages}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="{Binding IsBotMessage, Converter={StaticResource BoolToHorizontalAlignmentConverter}, Mode=OneWay}"
+                                    Margin="10">
+                                    <!-- Чекбокс, если требуется -->
+                                    <CheckBox Style="{StaticResource CustomRoundCheckBox}"
+                                        Visibility="{Binding IsSelectable, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        IsChecked="{Binding IsSelected}" Margin="5"/>
+
+                                    <!-- Используем TextBox внутри Border для отображения текста -->
+                                    <Border Background="{Binding IsBotMessage, Converter={StaticResource MessageBackgroundConverter}}"
+                                        CornerRadius="15" Padding="10" MaxWidth="300">
+                                        <TextBox x:Name="MessageRichTextBox" 
+                                             Text="{Binding Text}" 
+                                             FontSize="14" 
+                                             Foreground="#333" 
+                                             Background="{Binding IsBotMessage, Converter={StaticResource MessageBackgroundConverter}}" 
+                                             BorderBrush="Transparent" 
+                                             BorderThickness="0" 
+                                             IsReadOnly="True" 
+                                             VerticalScrollBarVisibility="Auto"
+                                             helpers:TextBoxHelper.BindToSelectedText="True"/>
+                                    </Border>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <!-- Поле ввода и кнопка отправки -->
+                <Grid Grid.Row="2" Margin="0,10,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <!-- Текстовое поле сверху -->
+                        <RowDefinition Height="Auto" />
+                        <!-- Кнопка снизу -->
+                    </Grid.RowDefinitions>
+
+                    <TextBox Text="{Binding UserInput}" AcceptsReturn="True" Height="80"
+                        TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                        FontSize="14" Background="#FAFAFA" BorderThickness="1"
+                        Foreground="#333" Margin="0,0,10,0" Grid.Row="0"/>
+
+                    <Button Content="💬 Отправить" Command="{Binding SendMessageCommand}" Padding="10,5"
+                        Background="#0078D7" Foreground="White" FontWeight="Bold"
+                        Width="140" Height="40" Cursor="Hand" Grid.Row="1"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Правая часть: Генерация изображений -->
+        <Border Grid.Column="1" Grid.Row="0" Padding="15" Background="White" CornerRadius="10" BorderBrush="#CCC" BorderThickness="1">
+            <StackPanel Orientation="Vertical" Margin="10" HorizontalAlignment="Center">
+                <TextBlock Text="🖼 Генератор изображений" FontSize="22" FontWeight="Bold" Foreground="#333" Margin="0,0,0,10"/>
+                <TextBox Width="250" Height="30" Text="{Binding ImageTitle}" ToolTip="Название картинки"/>
+                <TextBox Width="250" Height="70" Text="{Binding ImageDescription}" AcceptsReturn="True" TextWrapping="Wrap" ToolTip="Описание картинки" Margin="0,10,0,0"/>
+                <Button Content="🎨 Создать изображение" Command="{Binding GenerateImageCommand}" 
+                        Background="#28A745" Foreground="White" FontWeight="Bold" 
+                        Width="200" Height="35" Cursor="Hand" Margin="0,10,0,0"/>
+                <Border Width="250" Height="250" Background="#E0E0E0" Margin="0,10,0,0" BorderThickness="1" BorderBrush="#CCC">
+                    <Image Source="{Binding GeneratedImagePath}" Stretch="Uniform"/>
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <!-- Кнопки "Выбрать сообщения" и "Создать картинки" -->
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,10,10">
+            <Button Content="✅ Выбрать сообщения" Command="{Binding ToggleSelectionModeCommand}"
+                    Background="#FFAA00" Foreground="White" FontWeight="Bold"
+                    Width="180" Height="35" Cursor="Hand" Margin="0,0,10,0"/>
+
+            <Button Content="🖼 Создать картинки" Command="{Binding GenerateMultipleImagesCommand}"
+                    Background="#17A2B8" Foreground="White" FontWeight="Bold"
+                    Width="180" Height="35" Cursor="Hand"/>
+        </StackPanel>
+    </Grid>
+</Page>
