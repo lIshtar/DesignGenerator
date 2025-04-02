@@ -49,7 +49,6 @@ namespace DesignGeneratorUI
             base.OnStartup(e);
         }
 
-        //TODO: Понять, как добавить в контейнер данные из Infrastructure
         private void ConfigureServices(IServiceCollection services)
         {
             services.InitializeServices();

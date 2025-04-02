@@ -14,14 +14,15 @@ using DesignGeneratorUI.ViewModels.Navigation;
 using DesignGeneratorUI.Views.Pages;
 using DesignGenerator.Application.Parsers;
 using DesignGenerator.Application.Interfaces;
-using DesignGenerator.Application.Commands.CreateIllustration;
+using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Commands.AddNewIllustration;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using DesignGenerator.Application.Queries.Communicate;
-
+using System.Windows.Forms;
+using DesignGenerator.Application;
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
-    // TODO: Подключить бд
+    // TODO: обрезаются сообщения
     public class MainInteractionPageViewModel : BaseViewModel
     {
         private string _saveFolder;
@@ -123,16 +124,19 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private INavigationService _navigationService;
         private ICommandDispatcher _commandDispatcher;
         private IQueryDispatcher _queryDispatcher;
+        private ITemplateParser _templateParser;
 
         public MainInteractionPageViewModel(
             ICommandDispatcher commandDispatcher,
             IQueryDispatcher queryDispatcher,
             IConfiguration configuration,
-            INavigationService navigationService)
+            INavigationService navigationService,
+            ITemplateParser templateParser)
         {
             _navigationService = navigationService;
             _commandDispatcher = commandDispatcher;
             _queryDispatcher = queryDispatcher;
+            _templateParser = templateParser;
 
             //Инициализация команд
             SendMessageCommand = new RelayCommand(SendMessage);
@@ -146,7 +150,8 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             SelectedText = "";
 
             // Тестовые сообщения
-            Messages.Add(new ChatMessageViewModel { Text = "Привет! Как я могу помочь?", IsBotMessage = true });
+            Messages.Add(new ChatMessageViewModel { Text = "Вот пример двух объектов в формате JSON с полями `Title` и `Prompt`, которые могут использоваться для иллюстрации:\r\n\r\n```json\r\n[\r\n    {\r\n        \"Title\": \"Тайный сад\",\r\n        \"Prompt\": \"Изображение волшебного сада, полного ярких цветов и таинственных существ, с солнечными лучами, пробивающимися сквозь листву.\"\r\n    },\r\n    {\r\n        \"Title\": \"Космическое путешествие\",\r\n        \"Prompt\": \"Иллюстрация космического корабля, плывущего сквозь галактику, окруженного звездами и планетами, с яркими цветными туманностями на фоне.\"\r\n    }\r\n]\r\n```\r\n\r\nЭти объекты содержат названия иллюстраций и описания, которые могут быть использованы для их создания.", IsBotMessage = true });
+            _templateParser = templateParser;
         }
 
         private string GetDefaultImagePath() => Directory.GetCurrentDirectory() + "\\Images\\DefaultImage.png";
@@ -173,7 +178,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                 var result = _queryDispatcher.Send<CommunicateQuery, CommunicateQueryResponse>(communicateQuery).Result;
 
                 Messages.Remove(processingMessage);
-                Messages.Add(new ChatMessageViewModel { Text = result.Answer, IsBotMessage = true });
+                Messages.Add(new ChatMessageViewModel { Text = result.Response, IsBotMessage = true });
                 UserInput = string.Empty;
             }
         }
@@ -182,10 +187,10 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         {
             if (parameter is string selectedText)
             {
-                ImageDescription imageDescription = DescriptionParser.ParseOne(selectedText);
+                IllustrationTemplate imageDescription = _templateParser.ParseOne(selectedText);
                 if (imageDescription != null)
                 {
-                    this.ImageDescription = imageDescription.Description;
+                    this.ImageDescription = imageDescription.Prompt;
                     ImageTitle = imageDescription.Title;
                     WorkingStatus = "Successfully parsed image description";
                 }
@@ -215,12 +220,13 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             CanGenerateImages = false;
             string fullFolderPath = _saveFolder + "\\" + ImageTitle;
 
-            var createCommand = new CreateIllustrationCommand
+            var createCommand = new CreateIllustrationQuery
             {
                 Prompt = ImageDescription,
                 FolderPath = fullFolderPath
             };
-            _commandDispatcher.Send<CreateIllustrationCommand>(createCommand);
+            var response = await _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand);
+            GeneratedImagePath = response.IllustrationPath;
 
             var addCommand = new AddNewIllustrationCommand
             {
@@ -236,6 +242,18 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         private void GenerateMultipleImages(object parameter)
         {
+            var selectedMessages = Messages.Where(x => x.IsSelected).ToList();
+            var illustrationTemplates = IllustrationTemplatesContainer.GetInstance().IllustrastionsTemplates;
+            foreach (var message in selectedMessages)
+            {
+                var templates = _templateParser.ParseMany(message.Text);
+                foreach (var template in templates)
+                {
+                    if (illustrationTemplates.Where(x => x.Title == template.Title && x.Prompt == template.Prompt).Count() == 0)
+                        illustrationTemplates.Add(template);
+                }
+            }
+            IllustrationTemplatesContainer.GetInstance().IllustrastionsTemplates = illustrationTemplates;
             _navigationService.NavigateTo<DescriptionsViewerPage>();
         }
     }

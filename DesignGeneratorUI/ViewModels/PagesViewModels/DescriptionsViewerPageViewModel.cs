@@ -12,7 +12,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
     {
         public ObservableCollection<IllustrationTemplate> DataItems { get; set; }
         public ICommand StartCreationCommand { get; }
-        public ICommand ReturnBackCommad { get; }
+        public ICommand ReturnBackCommand { get; }
 
         private readonly INavigationService _navigationService;
         private readonly IQueryDispatcher _queryDispatcher;
@@ -25,7 +25,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             DataItems = IllustrationTemplatesContainer.GetInstance().IllustrastionsTemplates;
 
             StartCreationCommand = new RelayCommand(StartCreation);
-            ReturnBackCommad = new RelayCommand(ReturnBack);
+            ReturnBackCommand = new RelayCommand(ReturnBack);
         }
 
         private void StartCreation(object argument)

@@ -12,7 +12,7 @@ namespace DesignGenerator.Infrastructure
 
         private readonly HttpClient client = new HttpClient();
 
-        public async Task DownloadImageAsync(string imageUrl, DirectoryInfo saveFolder)
+        public async Task<string> DownloadImageAsync(string imageUrl, DirectoryInfo saveFolder)
         {
             try
             {
@@ -40,6 +40,8 @@ namespace DesignGenerator.Infrastructure
                 await File.WriteAllBytesAsync(savePath, imageBytes);
 
                 Console.WriteLine($"Изображение сохранено: {savePath}");
+
+                return savePath;
             }
             catch (HttpRequestException ex)
             {
@@ -49,6 +51,8 @@ namespace DesignGenerator.Infrastructure
             {
                 Console.WriteLine($"Ошибка при загрузке изображения: {ex.Message}");
             }
+
+            return "Exception";
         }
     }
 }

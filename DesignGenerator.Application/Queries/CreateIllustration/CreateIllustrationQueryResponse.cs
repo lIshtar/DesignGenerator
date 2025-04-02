@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DesignGenerator.Application.Queries.Communicate
+namespace DesignGenerator.Application.Queries.CreateIllustration
 {
-    public class CommunicateQueryResponse : IResult
+    public class CreateIllustrationQueryResponse : IResult
     {
-        public string Response { get; set; }
+        public string IllustrationPath {  get; set; }
     }
 }

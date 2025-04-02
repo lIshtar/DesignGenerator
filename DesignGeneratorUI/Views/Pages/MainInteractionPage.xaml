@@ -109,6 +109,7 @@
                                              BorderThickness="0" 
                                              IsReadOnly="True" 
                                              VerticalScrollBarVisibility="Auto"
+                                             TextWrapping="Wrap"
                                              helpers:TextBoxHelper.BindToSelectedText="True"/>
                                     </Border>
                                 </StackPanel>

@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using DesignGenerator.Application;
 using DesignGenerator.Application.Parsers;
 using DesignGenerator.Infrastructure.AICommunicators;
 using DesignGeneratorUI.FileServices;
@@ -77,7 +78,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private IConfiguration _config;
         private IOpenDialogService _dialogService;
         //ApplicationDbContext _dbContext;
-        private List<ImageDescription>? _imageDescriptions;
+        private List<IllustrationTemplate>? _imageDescriptions;
 
         public HomePageViewModel(
             ITextAICommunicator textAICommunicator, 
@@ -122,7 +123,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                     var directory = new DirectoryInfo(Path.Combine(folder, imageDescription.Title));
                     for (int i = 0; i < imageCounter; i++)
                     {
-                        imageUrl = await _imageAICommunicator.GetImageUrlAsync(imageDescription.Description);
+                        imageUrl = await _imageAICommunicator.GetImageUrlAsync(imageDescription.Prompt);
                         //await ImageDownloader.DownloadImageAsync(imageUrl, directory);
                     }
 
@@ -159,7 +160,8 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             GeneratedScript = answer.Result;
             CanGenerateImages = true;
 
-            _imageDescriptions = DescriptionParser.ParseMany(GeneratedScript);
+            
+            _imageDescriptions = new IllustrationTemplateParser().ParseMany(GeneratedScript);
 
             StatusMessage = $"Скрипт сгенерирован для {ElementCount} элементов.";
         }

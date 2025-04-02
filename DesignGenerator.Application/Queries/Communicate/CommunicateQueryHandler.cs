@@ -16,9 +16,10 @@ namespace DesignGenerator.Application.Queries.Communicate
             _textAICommunicator = textAICommunicator;
         }
 
-        public Task<CommunicateQueryResponse> Handle(CommunicateQuery query)
+        public async Task<CommunicateQueryResponse> Handle(CommunicateQuery query)
         {
-            throw new NotImplementedException();
+            string response = await _textAICommunicator.GetTextAnswerAsync(query.Query);
+            return new CommunicateQueryResponse { Response = response };
         }
     }
 }

@@ -29,11 +29,17 @@ namespace DesignGeneratorUI
             services.AddSingleton<HomePage>();
             services.AddSingleton<DataPage>();
             services.AddSingleton<MainInteractionPage>();
+            services.AddSingleton<GenerationProgressPage>();
+            services.AddSingleton<DescriptionsViewerPage>();
+            services.AddSingleton<ImageViewerPage>();
 
             // Добавляем все ViewModel страниц
             services.AddSingleton<DataPageViewModel>();
             services.AddSingleton<HomePageViewModel>();
             services.AddSingleton<MainInteractionPageViewModel>();
+            services.AddSingleton<GenerationProgressPageViewModel>();
+            services.AddSingleton<DescriptionsViewerPageViewModel>();
+            services.AddSingleton<ImageViewerPageViewModel>();
 
             // Добавляем все фабрики
             services.AddTransient<IPageFactory, PageFactory>();

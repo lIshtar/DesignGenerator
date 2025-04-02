@@ -1,6 +1,6 @@
 ﻿using DesignGenerator.Application;
 using DesignGenerator.Application.Commands.AddNewIllustration;
-using DesignGenerator.Application.Commands.CreateIllustration;
+using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Interfaces;
 using DesignGenerator.Application.Parsers;
 using DesignGeneratorUI.ViewModels.ElementsViewModel;
@@ -22,6 +22,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
     {
         private readonly CancellationTokenSource _cts;
         private readonly INavigationService _navigationService;
+        private readonly IQueryDispatcher _queryDispatcher;
         private readonly ICommandDispatcher _commandDispatcher;
         private List<IllustrationTemplate> _illustrationsTemplates;
         private string _saveFolder;
@@ -33,7 +34,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         public ICommand CancelCommand { get; }
         public ICommand GoToViewerCommand { get; }
-
+        public ICommand StartGenerationCommand { get; }
 
         public int ProgressValue
         {
@@ -59,9 +60,10 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             set { _isGenerationComplete = value; OnPropertyChanged(nameof(IsGenerationComplete)); }
         }
 
-        public GenerationProgressPageViewModel(INavigationService navigationService, ICommandDispatcher commandDispatcher, IConfiguration configuration)
+        public GenerationProgressPageViewModel(INavigationService navigationService, IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher, IConfiguration configuration)
         {
             _navigationService = navigationService;
+            _queryDispatcher = queryDispatcher;
             _commandDispatcher = commandDispatcher;
 
             ProgressValue = 0;
@@ -71,11 +73,11 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             _saveFolder = GetImageFolder(configuration);
 
             _illustrationsTemplates = IllustrationTemplatesContainer.GetInstance().IllustrastionsTemplates.ToList();
+            NumberOfImages = _illustrationsTemplates.Count;
 
             CancelCommand = new RelayCommand(CancelGeneration);
             GoToViewerCommand = new RelayCommand(GoToViewer);
-
-            StartGeneration();
+            StartGenerationCommand = new RelayCommand(StartGeneration);
         }
 
         private string GetImageFolder(IConfiguration configuration)
@@ -90,12 +92,12 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             _navigationService.NavigateTo<ImageViewerPage>();
         }
 
-        private async void StartGeneration()
+        private async void StartGeneration(object argument)
         {
             try
             {
                 string illustrationFolder;
-                for (int i = 1; i <= NumberOfImages; i++)
+                for (int i = 0; i < NumberOfImages; i++)
                 {
                     if (_cts.Token.IsCancellationRequested)
                         break;
@@ -104,12 +106,12 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                     ProgressText = $"Генерация... {ProgressValue}%";
 
                     illustrationFolder = _saveFolder + "\\" + _illustrationsTemplates[i].Title;
-                    var createCommand = new CreateIllustrationCommand
+                    var createCommand = new CreateIllustrationQuery
                     {
                         Prompt = _illustrationsTemplates[i].Prompt,
                         FolderPath = illustrationFolder
                     };
-                    _commandDispatcher.Send<CreateIllustrationCommand>(createCommand);
+                    await _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand);
 
                     var addCommand = new AddNewIllustrationCommand
                     {

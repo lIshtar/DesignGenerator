@@ -1,5 +1,5 @@
 ﻿using DesignGenerator.Application.Commands.AddNewIllustration;
-using DesignGenerator.Application.Commands.CreateIllustration;
+using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Interfaces;
 using DesignGenerator.Application.Parsers;
 using DesignGeneratorUI.ViewModels.ElementsViewModel;
@@ -93,12 +93,12 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         // TODO: Пересмотреть IllustrationFolder
         private void RegenerateImage(object argument)
         {
-            var createCommand = new CreateIllustrationCommand
+            var createCommand = new CreateIllustrationQuery
             {
                 Prompt = Prompt,
                 FolderPath = ImageSource
             };
-            _commandDispatcher.Send<CreateIllustrationCommand>(createCommand);
+            _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand);
 
             var addCommand = new AddNewIllustrationCommand
             {

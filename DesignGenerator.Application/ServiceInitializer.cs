@@ -1,8 +1,9 @@
 ﻿using DesignGenerator.Application.Commands;
 using DesignGenerator.Application.Commands.AddNewIllustration;
-using DesignGenerator.Application.Commands.CreateIllustration;
+using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Commands.UpdateIllustrationPrompt;
 using DesignGenerator.Application.Interfaces;
+using DesignGenerator.Application.Parsers;
 using DesignGenerator.Application.Queries;
 using DesignGenerator.Application.Queries.Communicate;
 using DesignGenerator.Application.Queries.GetUnreviewedIllustrations;
@@ -21,12 +22,14 @@ namespace DesignGenerator.Application
         {
             services.AddTransient<ICommandDispatcher, CommandDispatcher>();
             services.AddTransient<ICommandHandler<AddNewIllustrationCommand>, AddNewIllustrationCommandHandler>();
-            services.AddTransient<ICommandHandler<CreateIllustrationCommand>, CreateIllustrationCommandHandler>();
             services.AddTransient<ICommandHandler<UpdateIllustrationPromptCommand>, UpdateIllustrationPromptCommandHandler>();
 
             services.AddTransient<IQueryDispatcher, QueryDispatcher>();
             services.AddTransient<IQueryHandler<CommunicateQuery, CommunicateQueryResponse>, CommunicateQueryHandler>();
             services.AddTransient<IQueryHandler<GetUnreviewedIllustrationsQuery, GetUnreviewedIllustrationsQueryResponse>, GetUnreviewedIllustrationsQueryHandler>();
+            services.AddTransient<IQueryHandler<CreateIllustrationQuery, CreateIllustrationQueryResponse>, CreateIllustrationQueryHandler>();
+
+            services.AddTransient<ITemplateParser, IllustrationTemplateJsonParser>();
 
             return services;
         }

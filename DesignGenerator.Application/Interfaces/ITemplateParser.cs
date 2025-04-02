@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace DesignGenerator.Application.Interfaces
 {
-    public interface IImageDownloader
+    public interface ITemplateParser
     {
-        Task<string> DownloadImageAsync(string imageUrl, DirectoryInfo saveFolder);
+        public List<IllustrationTemplate> ParseMany(string input);
+        public IllustrationTemplate ParseOne(string input);
     }
 }
