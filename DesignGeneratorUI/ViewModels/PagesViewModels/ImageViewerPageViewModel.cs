@@ -1,4 +1,4 @@
-﻿using DesignGenerator.Application.Commands.AddNewIllustration;
+﻿using DesignGenerator.Application.Commands.AddIllustration;
 using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Interfaces;
 using DesignGenerator.Application.Parsers;
@@ -100,13 +100,13 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             };
             _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand);
 
-            var addCommand = new AddNewIllustrationCommand
+            var addCommand = new AddIllustrationCommand
             {
                 Title = this.Title,
                 Description = this.Prompt,
                 IllustrationFolder = ImageSource
             };
-            _commandDispatcher.Send<AddNewIllustrationCommand>(addCommand);
+            _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
             IsRegenerateEnabled = false;
         }
     }

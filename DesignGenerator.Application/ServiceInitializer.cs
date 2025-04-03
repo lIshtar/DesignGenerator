@@ -1,7 +1,7 @@
 ﻿using DesignGenerator.Application.Commands;
-using DesignGenerator.Application.Commands.AddNewIllustration;
+using DesignGenerator.Application.Commands.AddIllustration;
 using DesignGenerator.Application.Queries.CreateIllustration;
-using DesignGenerator.Application.Commands.UpdateIllustrationPrompt;
+using DesignGenerator.Application.Commands.UpdateIllustration;
 using DesignGenerator.Application.Interfaces;
 using DesignGenerator.Application.Parsers;
 using DesignGenerator.Application.Queries;
@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DesignGenerator.Application.Mappers;
 
 namespace DesignGenerator.Application
 {
@@ -21,8 +22,8 @@ namespace DesignGenerator.Application
         public static IServiceCollection InitializeServices(this IServiceCollection services)
         {
             services.AddTransient<ICommandDispatcher, CommandDispatcher>();
-            services.AddTransient<ICommandHandler<AddNewIllustrationCommand>, AddNewIllustrationCommandHandler>();
-            services.AddTransient<ICommandHandler<UpdateIllustrationPromptCommand>, UpdateIllustrationPromptCommandHandler>();
+            services.AddTransient<ICommandHandler<AddIllustrationCommand>, AddNewIllustrationCommandHandler>();
+            services.AddTransient<ICommandHandler<UpdateIllustrationCommand>, UpdateIllustrationCommandHandler>();
 
             services.AddTransient<IQueryDispatcher, QueryDispatcher>();
             services.AddTransient<IQueryHandler<CommunicateQuery, CommunicateQueryResponse>, CommunicateQueryHandler>();
@@ -30,6 +31,10 @@ namespace DesignGenerator.Application
             services.AddTransient<IQueryHandler<CreateIllustrationQuery, CreateIllustrationQueryResponse>, CreateIllustrationQueryHandler>();
 
             services.AddTransient<ITemplateParser, IllustrationTemplateJsonParser>();
+
+            services.AddAutoMapper(typeof(AddIllustrationCommandProfile));
+            services.AddAutoMapper(typeof(GetUnreviewedIllustrationsQueryResponseProfile));
+            services.AddAutoMapper(typeof(UpdateIllustrationCommandProfile));
 
             return services;
         }

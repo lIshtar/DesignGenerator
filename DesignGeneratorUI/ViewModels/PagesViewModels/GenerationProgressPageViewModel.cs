@@ -1,5 +1,5 @@
 ﻿using DesignGenerator.Application;
-using DesignGenerator.Application.Commands.AddNewIllustration;
+using DesignGenerator.Application.Commands.AddIllustration;
 using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Interfaces;
 using DesignGenerator.Application.Parsers;
@@ -106,20 +106,20 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                     ProgressText = $"Генерация... {ProgressValue}%";
 
                     illustrationFolder = _saveFolder + "\\" + _illustrationsTemplates[i].Title;
-                    var createCommand = new CreateIllustrationQuery
+                    var createQuery = new CreateIllustrationQuery
                     {
                         Prompt = _illustrationsTemplates[i].Prompt,
                         FolderPath = illustrationFolder
                     };
-                    await _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand);
+                    var createIllustrationQueryResponse = await _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createQuery);
 
-                    var addCommand = new AddNewIllustrationCommand
+                    var addCommand = new AddIllustrationCommand
                     {
                         Title = _illustrationsTemplates[i].Title,
-                        Description = _illustrationsTemplates[i].Prompt,
-                        IllustrationFolder = illustrationFolder
+                        Prompt = _illustrationsTemplates[i].Prompt,
+                        IllustrationPath = createIllustrationQueryResponse.IllustrationPath
                     };
-                    _commandDispatcher.Send<AddNewIllustrationCommand>(addCommand);
+                    _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
                 }
 
                 ProgressText = "Генерация завершена!";

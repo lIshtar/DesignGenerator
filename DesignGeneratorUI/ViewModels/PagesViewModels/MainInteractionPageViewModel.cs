@@ -15,7 +15,7 @@ using DesignGeneratorUI.Views.Pages;
 using DesignGenerator.Application.Parsers;
 using DesignGenerator.Application.Interfaces;
 using DesignGenerator.Application.Queries.CreateIllustration;
-using DesignGenerator.Application.Commands.AddNewIllustration;
+using DesignGenerator.Application.Commands.AddIllustration;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using DesignGenerator.Application.Queries.Communicate;
 using System.Windows.Forms;
@@ -228,13 +228,13 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             var response = await _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand);
             GeneratedImagePath = response.IllustrationPath;
 
-            var addCommand = new AddNewIllustrationCommand
+            var addCommand = new AddIllustrationCommand
             {
                 Title = ImageTitle,
                 Description = ImageDescription,
                 IllustrationFolder = fullFolderPath
             };
-            _commandDispatcher.Send<AddNewIllustrationCommand>(addCommand);
+            _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
 
             CanGenerateImages = true;
             WorkingStatus = "Image creating completed";

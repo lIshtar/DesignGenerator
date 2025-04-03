@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DesignGenerator.Infrastructure.Database.DBEntities
+namespace DesignGenerator.Infrastructure.DBEntities
 {
     public class Illustration
     {
@@ -17,11 +17,9 @@ namespace DesignGenerator.Infrastructure.Database.DBEntities
         public int Id { get; set; }
         public string Title { get; set; }
         public string Prompt { get; set; }
-        public string Path { get; set; }
-
-        public string Description { get; set; }
+        public string IllusrtationPath { get; set; }
         public DateTime GenerationDate { get; set; }
-        bool IsReviewed { get; set; }
+        public bool IsReviewed { get; set; }
 
         //[ForeignKey("item")]
         //public int? Item { get; set; }

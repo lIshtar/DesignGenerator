@@ -10,6 +10,6 @@ namespace DesignGenerator.Application.Queries.GetUnreviewedIllustrations
 {
     public class GetUnreviewedIllustrationsQueryResponse : IResult
     {
-        List<Illustartion> illustrations { get; set; }
+        public List<Illustration> Illustrations { get; set; }
     }
 }

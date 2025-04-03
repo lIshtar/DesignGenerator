@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 using Microsoft.Extensions.Configuration;
-using DesignGenerator.Infrastructure.Database.DBEntities;
+using DesignGenerator.Infrastructure.DBEntities;
 
 namespace DesignGenerator.Infrastructure
 {

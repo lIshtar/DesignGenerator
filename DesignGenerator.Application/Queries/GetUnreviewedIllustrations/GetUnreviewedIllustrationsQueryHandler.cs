@@ -1,4 +1,6 @@
-﻿using DesignGenerator.Application.Interfaces;
+﻿using AutoMapper;
+using DesignGenerator.Application.Interfaces;
+using DesignGenerator.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +11,24 @@ namespace DesignGenerator.Application.Queries.GetUnreviewedIllustrations
 {
     public class GetUnreviewedIllustrationsQueryHandler : IQueryHandler<GetUnreviewedIllustrationsQuery, GetUnreviewedIllustrationsQueryResponse>
     {
-        IIllustartionRepository _illustrationRepository;
-        public GetUnreviewedIllustrationsQueryHandler(IIllustartionRepository illustartionRepository)
+        IRepositoryService<Illustration> _repositoryService;
+        IMapper _mapper;
+        public GetUnreviewedIllustrationsQueryHandler(IRepositoryService<Illustration> illustartionRepository, IMapper mapper)
         {
-            _illustrationRepository = illustartionRepository;
+            _repositoryService = illustartionRepository;
+            _mapper = mapper;
         }
 
+        // TODO: maybe implement (manually in mapper) mappering to response
         public async Task<GetUnreviewedIllustrationsQueryResponse> Handle(GetUnreviewedIllustrationsQuery query)
         {
-            throw new NotImplementedException();
+            var illustrations = await _repositoryService.GetAllAsync();
+            var unreviewedIllustrations = illustrations.Where(i => i.IsReviewed == false).ToList();
+            var response = new GetUnreviewedIllustrationsQueryResponse
+            {
+                Illustrations = unreviewedIllustrations
+            };
+            return response;
         }
     }
 }

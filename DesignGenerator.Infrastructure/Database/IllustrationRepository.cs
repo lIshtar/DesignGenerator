@@ -1,6 +1,6 @@
 ﻿using DesignGenerator.Application.Interfaces;
-using DesignGenerator.Domain;
 using DesignGenerator.Infrastructure.DBEntities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,21 +9,44 @@ using System.Threading.Tasks;
 
 namespace DesignGenerator.Infrastructure.Database
 {
-    class IllustrationRepository : IIllustartionRepository
+    class IllustrationRepository : IRepository<Illustration>
     {
-        private ApplicationDbContext _context;
+        private DbSet<Illustration> _dbSet;
+        private DbContext _context;
         public IllustrationRepository(ApplicationDbContext applicationDbContext)
         {
+            _dbSet = applicationDbContext.Illustrations;
             _context = applicationDbContext;
         }
-        public async Task UpdateIllustration(string illustrationPath, string prompt)
+
+        public async Task AddAsync(Illustration entity)
         {
-            throw new NotImplementedException();
+            await _dbSet.AddAsync(entity);
         }
 
-        public async Task AddNewIllustration(Illustartion illustartion)
+        public async Task DeleteAsync(Illustration entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Remove(entity);
+        }
+
+        public async Task<IEnumerable<Illustration>> GetAllAsync()
+        {
+            return await _dbSet.ToListAsync();
+        }
+
+        public async Task<Illustration> GetByIdAsync(int id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
+
+        public async Task UpdateAsync(Illustration entity)
+        {
+            _dbSet.Attach(entity);  // Подключаем сущность, если она еще не отслеживается
+            _context.Entry(entity).State = EntityState.Modified;
+        }
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }
