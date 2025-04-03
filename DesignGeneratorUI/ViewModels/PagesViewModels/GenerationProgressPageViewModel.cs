@@ -20,7 +20,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private List<IllustrationTemplate> _illustrationsTemplates;
         private string _saveFolder;
 
-        private int _progressValue;
+        private double _progressValue;
         private string? _progressText;
         private int _numberOfImages;
         private bool _isGenerationComplete;
@@ -29,7 +29,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         public ICommand GoToViewerCommand { get; }
         public ICommand StartGenerationCommand { get; }
 
-        public int ProgressValue
+        public double ProgressValue
         {
             get => _progressValue;
             set { _progressValue = value; OnPropertyChanged(nameof(ProgressValue)); }
@@ -67,10 +67,9 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
             _illustrationsTemplates = IllustrationTemplatesContainer.GetInstance().IllustrastionsTemplates.ToList();
             NumberOfImages = _illustrationsTemplates.Count;
-
             CancelCommand = new RelayCommand(CancelGeneration);
             GoToViewerCommand = new RelayCommand(GoToViewer);
-            StartGenerationCommand = new AsyncRelayCommand(StartGeneration);
+            StartGenerationCommand = new RelayCommand(ExecuteStartGeneration);
         }
 
         private string GetImageFolder(IConfiguration configuration)
@@ -85,18 +84,26 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             _navigationService.NavigateTo<ImageViewerPage>();
         }
 
-        private async Task StartGeneration()
+        private void ExecuteStartGeneration(object argument)
+        {
+            var temp = NumberOfImages;
+            Task.Run(() => StartGeneration(temp));
+        }
+
+        private async Task StartGeneration(int numberOfImages)
         {
             try
             {
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    ProgressText = "Генерация начата!";
+                });
+
                 string illustrationFolder;
-                for (int i = 0; i < NumberOfImages; i++)
+                for (int i = 0; i < numberOfImages; i++)
                 {
                     if (_cts.Token.IsCancellationRequested)
                         break;
-
-                    
-                    
 
                     illustrationFolder = _saveFolder + "\\" + _illustrationsTemplates[i].Title;
                     var createQuery = new CreateIllustrationQuery
@@ -104,14 +111,23 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                         Prompt = _illustrationsTemplates[i].Prompt,
                         FolderPath = illustrationFolder
                     };
-                    var createIllustrationQueryResponse = await Task.Run(() => 
+
+                    // TODO: replace with real logic
+                    await Task.Delay(1000);
+
+                    var createIllustrationQueryResponse = await Task.Run(() =>
                         _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createQuery));
 
-                    Application.Current.Dispatcher.Invoke(() =>
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
                     {
-                        ProgressValue = i / NumberOfImages;
+                        ProgressValue = (i + 1);
                     });
-                    ProgressText = $"Генерация... {ProgressValue}%";
+
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        ProgressText = $"Генерация... {ProgressValue / numberOfImages * 100}%";
+                    });
+                    
 
                     //var addCommand = new AddIllustrationCommand
                     //{
@@ -120,14 +136,19 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                     //    IllustrationPath = createIllustrationQueryResponse.IllustrationPath,
                     //    IsReviewed = false,
                     //};
+
                     //await Task.Run(() => _commandDispatcher.Send<AddIllustrationCommand>(addCommand));
                 }
 
-                ProgressText = "Генерация завершена!";
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    ProgressText = "Генерация завершена!";
+                });
+                //
             }
             catch (OperationCanceledException)
             {
-                ProgressText = "Отменено";
+                //ProgressText = "Отменено";
             }
         }
 

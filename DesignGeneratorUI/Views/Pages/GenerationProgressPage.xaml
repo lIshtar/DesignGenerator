@@ -5,42 +5,113 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DesignGeneratorUI.Views.Pages"
       xmlns:converters="clr-namespace:DesignGeneratorUI.Converters"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="GenerationProgressPage">
+      mc:Ignorable="d"
+      Title="Generation Progress"
+      Background="#F5F5F5">
+
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+
+        <!-- Стили для кнопок -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#007BFF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Width" Value="180"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="#007BFF" CornerRadius="8" 
+                        SnapsToDevicePixels="True" Padding="6">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0056b3"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#DC3545"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Width" Value="140"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="#DC3545" CornerRadius="8" 
+            SnapsToDevicePixels="True" Padding="6">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                          VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#B22234"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Page.Resources>
 
-    <Grid Margin="10">
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Генерация изображений..." FontSize="18" FontWeight="Bold" 
-                   HorizontalAlignment="Center" Margin="0,0,0,10"/>
+        <!-- Заголовок -->
+        <TextBlock Text="Генерация изображений..." FontSize="22" FontWeight="Bold" 
+                   Foreground="#333" HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
-        <ProgressBar Grid.Row="1" Height="30" IsIndeterminate="False"
-                     Value="{Binding ProgressValue}" Maximum="{Binding NumberOfImages}"/>
+        <!-- Прогресс -->
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <ProgressBar Width="500" Height="20" IsIndeterminate="False"
+                         Value="{Binding ProgressValue}" Maximum="{Binding NumberOfImages}"/>
+            <TextBlock Text="{Binding ProgressText}" FontSize="14" 
+                       HorizontalAlignment="Center" Margin="0,10,0,0"/>
+        </StackPanel>
 
-        <TextBlock Grid.Row="1" Text="{Binding ProgressText}" FontSize="14" 
-                   HorizontalAlignment="Center" Margin="0,10,0,0"/>
+        <!-- Кнопки управления -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+            <Button Content="🚀 Начать генерацию" Command="{Binding StartGenerationCommand}" 
+                    Style="{StaticResource PrimaryButtonStyle}"/>
 
-        <Button Content="🚀 Начать генерацию" Command="{Binding StartGenerationCommand}" Padding="10,5"
-                Background="#28A745" Foreground="White" FontWeight="Bold"
-                Width="180" Height="40" Cursor="Hand" Margin="10,0,0,0"/>
-        <!-- Контейнер для кнопок -->
-        <Grid Grid.Row="2" HorizontalAlignment="Center" Margin="10">
-            <Button Content="Отмена" Padding="10" Height="40" Width="120"
-                    Command="{Binding CancelCommand}"
+            <Button Content="Отмена" Command="{Binding CancelCommand}" 
+                    Style="{StaticResource SecondaryButtonStyle}"
                     Visibility="{Binding IsGenerationComplete, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
 
-            <Button Content="Перейти к просмотру" Padding="10" Height="40" Width="180"
-                    Command="{Binding GoToViewerCommand}"
+            <Button Content="Перейти к просмотру" Command="{Binding GoToViewerCommand}" 
+                    Style="{StaticResource PrimaryButtonStyle}"
                     Visibility="{Binding IsGenerationComplete, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-        </Grid>
+        </StackPanel>
     </Grid>
 </Page>
