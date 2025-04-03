@@ -47,7 +47,7 @@ namespace DesignGenerator.Infrastructure.AICommunicators
                 //return responseString;
 
                 // некрасиво и неправильно, но работает
-
+                
                 var response = Task.Run(() => httpClient.PostAsJsonAsync(_url, data));
                 response.Wait();
                 string jsonResponse = await response.Result.Content.ReadAsStringAsync();

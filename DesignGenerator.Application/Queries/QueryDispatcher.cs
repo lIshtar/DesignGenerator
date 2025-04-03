@@ -16,11 +16,11 @@ namespace DesignGenerator.Application.Queries
             _service = service;
         }
 
-        public Task<TResponse> Send<TQuery, TResponse>(TQuery query) where TQuery : IQuery<TResponse> where TResponse : IResult
+        public async Task<TResponse> Send<TQuery, TResponse>(TQuery query) where TQuery : IQuery<TResponse> where TResponse : IResult
         {
             var handler = _service.GetService(typeof(IQueryHandler<TQuery, TResponse>));
             if (handler != null)
-                return ((IQueryHandler<TQuery, TResponse>)handler).Handle(query);
+                return await ((IQueryHandler<TQuery, TResponse>)handler).Handle(query);
             else
                 throw new Exception($"Command doesn't have any handler {query.GetType().Name}");
         }

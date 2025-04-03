@@ -7,6 +7,7 @@ using DesignGeneratorUI.Views.Pages;
 using Microsoft.Extensions.Configuration;
 using ICommand = System.Windows.Input.ICommand;
 using CommunityToolkit.Mvvm.Input;
+using Application = System.Windows.Application;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
@@ -94,8 +95,8 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                     if (_cts.Token.IsCancellationRequested)
                         break;
 
-                    ProgressValue = i/NumberOfImages;
-                    ProgressText = $"Генерация... {ProgressValue}%";
+                    
+                    
 
                     illustrationFolder = _saveFolder + "\\" + _illustrationsTemplates[i].Title;
                     var createQuery = new CreateIllustrationQuery
@@ -103,16 +104,23 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                         Prompt = _illustrationsTemplates[i].Prompt,
                         FolderPath = illustrationFolder
                     };
-                    var createIllustrationQueryResponse = await _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createQuery);
+                    var createIllustrationQueryResponse = await Task.Run(() => 
+                        _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createQuery));
 
-                    var addCommand = new AddIllustrationCommand
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Title = _illustrationsTemplates[i].Title,
-                        Prompt = _illustrationsTemplates[i].Prompt,
-                        IllustrationPath = createIllustrationQueryResponse.IllustrationPath,
-                        IsReviewed = false,
-                    };
-                    await _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
+                        ProgressValue = i / NumberOfImages;
+                    });
+                    ProgressText = $"Генерация... {ProgressValue}%";
+
+                    //var addCommand = new AddIllustrationCommand
+                    //{
+                    //    Title = _illustrationsTemplates[i].Title,
+                    //    Prompt = _illustrationsTemplates[i].Prompt,
+                    //    IllustrationPath = createIllustrationQueryResponse.IllustrationPath,
+                    //    IsReviewed = false,
+                    //};
+                    //await Task.Run(() => _commandDispatcher.Send<AddIllustrationCommand>(addCommand));
                 }
 
                 ProgressText = "Генерация завершена!";

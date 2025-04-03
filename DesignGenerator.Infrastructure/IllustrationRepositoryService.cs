@@ -24,12 +24,14 @@ namespace DesignGenerator.Infrastructure
         {
             var illustration = _mapper.Map<DBEntities.Illustration>(dto);
             await _repository.AddAsync(illustration);
+            await _repository.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Illustration dto)
         {
             var illustration = _mapper.Map<DBEntities.Illustration>(dto);
             await _repository.DeleteAsync(illustration);
+            await _repository.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Illustration>> GetAllAsync()
@@ -51,6 +53,7 @@ namespace DesignGenerator.Infrastructure
 
             _mapper.Map(dto, illustration); // Обновляем данные из DTO в сущности
             await _repository.UpdateAsync(illustration);
+            await _repository.SaveChangesAsync();
         }
     }
 }

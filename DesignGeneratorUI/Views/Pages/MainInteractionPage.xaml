@@ -101,7 +101,7 @@
                                     <Border Background="{Binding IsBotMessage, Converter={StaticResource MessageBackgroundConverter}}"
                                         CornerRadius="15" Padding="10" MaxWidth="300">
                                         <TextBox x:Name="MessageRichTextBox" 
-                                             Text="{Binding Text, Mode=TwoWay}" 
+                                             Text="{Binding Text, Mode=TwoWay, IsAsync=True}" 
                                              FontSize="14" 
                                              Foreground="#333" 
                                              Background="{Binding IsBotMessage, Converter={StaticResource MessageBackgroundConverter}}" 

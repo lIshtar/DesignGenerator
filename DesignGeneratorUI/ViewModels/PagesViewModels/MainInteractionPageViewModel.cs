@@ -11,6 +11,7 @@ using DesignGenerator.Application.Commands.AddIllustration;
 using DesignGenerator.Application.Queries.Communicate;
 using DesignGenerator.Application;
 using CommunityToolkit.Mvvm.Input;
+using System.Windows.Threading;
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
     public class MainInteractionPageViewModel : BaseViewModel
@@ -162,18 +163,17 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                 var processingMessage = new ChatMessageViewModel { Text = "Processing...", IsBotMessage = true };
                 Messages.Add(processingMessage);
 
-                var response = new CommunicateQueryResponse();
                 var message = new ChatMessageViewModel { IsBotMessage = true };
 
-                await Task.Run(async () => {
-                    var communicateQuery = new CommunicateQuery
-                    {
-                        Query = UserInput
-                    };
-                    response = await _queryDispatcher.Send<CommunicateQuery, CommunicateQueryResponse>(communicateQuery);
-                    message.Text = response.Message;
-                });
-                
+                var communicateQuery = new CommunicateQuery
+                {
+                    Query = UserInput
+                };
+
+                var response = await Task.Run(() => 
+                    _queryDispatcher.Send<CommunicateQuery, CommunicateQueryResponse>(communicateQuery));
+
+                message.Text = response.Message;
 
                 Messages.Remove(processingMessage);
                 Messages.Add(message);
@@ -223,17 +223,17 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                 Prompt = ImageDescription,
                 FolderPath = fullFolderPath
             };
-            var response = await _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand);
+            var response = await Task.Run(() => _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand));
             GeneratedImagePath = response.IllustrationPath;
 
             var addCommand = new AddIllustrationCommand
             {
                 Title = ImageTitle,
                 Prompt = ImageDescription,
-                IllustrationPath = GeneratedImagePath,
+                IllustrationPath = response.IllustrationPath,
                 IsReviewed = true
             };
-            await _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
+            await Task.Run(() => _commandDispatcher.Send<AddIllustrationCommand>(addCommand));
 
             CanGenerateImages = true;
             WorkingStatus = "Image creating completed";
