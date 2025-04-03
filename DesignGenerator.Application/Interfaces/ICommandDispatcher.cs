@@ -8,6 +8,6 @@ namespace DesignGenerator.Application.Interfaces
 {
     public interface ICommandDispatcher
     {
-        void Send<T>(T command) where T : ICommand;
+        Task Send<T>(T command) where T : ICommand;
     }
 }

@@ -9,6 +9,6 @@ namespace DesignGenerator.Application.Queries.Communicate
 {
     public class CommunicateQueryResponse : IResult
     {
-        public string Response { get; set; }
+        public string Message { get; set; }
     }
 }

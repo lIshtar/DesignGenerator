@@ -9,6 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ICommand = System.Windows.Input.ICommand;
+using CommunityToolkit.Mvvm.Input;
+using DesignGenerator.Domain;
+using DesignGenerator.Application.Queries.GetUnreviewedIllustrations;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
@@ -47,7 +50,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         public ICommand NextImageCommand { get; }
         public ICommand RegenerateCommand { get; }
 
-        private List<CreatedIllustrationViewModel>? _illustrations;
+        private List<Illustration>? _illustrations;
         private int _illustrationIndex;
 
         private IQueryDispatcher _queryDispatcher;
@@ -59,9 +62,9 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             _commandDispatcher = commandDispatcher;
 
             NextImageCommand = new RelayCommand(NextImage);
-            RegenerateCommand = new RelayCommand(RegenerateImage, (arg) => IsRegenerateEnabled);
+            RegenerateCommand = new AsyncRelayCommand(RegenerateImage, () => IsRegenerateEnabled);
 
-            _illustrations = InitializeIllustrations();
+            InitializeIllustrations();
 
             // Инициализация данных
             if (_illustrations is not null)
@@ -76,9 +79,11 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         }
 
         // TODO: Реализовать метод получения данных об иллюстрации
-        private List<CreatedIllustrationViewModel> InitializeIllustrations()
+        private async Task InitializeIllustrations()
         {
-            throw new NotImplementedException();
+            var command = new GetUnreviewedIllustrationsQuery();
+            var response = await _queryDispatcher.Send<GetUnreviewedIllustrationsQuery, GetUnreviewedIllustrationsQueryResponse>(command);
+            _illustrations = response.Illustrations;
         }
 
         private void NextImage(object argument)
@@ -91,22 +96,23 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         }
 
         // TODO: Пересмотреть IllustrationFolder
-        private void RegenerateImage(object argument)
+        private async Task RegenerateImage()
         {
             var createCommand = new CreateIllustrationQuery
             {
                 Prompt = Prompt,
                 FolderPath = ImageSource
             };
-            _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand);
+            var response = await _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand);
+            ImageSource = response.IllustrationPath;
 
             var addCommand = new AddIllustrationCommand
             {
                 Title = this.Title,
-                Description = this.Prompt,
-                IllustrationFolder = ImageSource
+                Prompt = this.Prompt,
+                IllustrationPath = ImageSource
             };
-            _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
+            await _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
             IsRegenerateEnabled = false;
         }
     }

@@ -1,25 +1,16 @@
 ﻿using DesignGeneratorUI.ViewModels.ElementsViewModel;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ICommand = System.Windows.Input.ICommand;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using System.Runtime;
-using Microsoft.VisualBasic.ApplicationServices;
 using DesignGeneratorUI.ViewModels.Navigation;
 using DesignGeneratorUI.Views.Pages;
-using DesignGenerator.Application.Parsers;
 using DesignGenerator.Application.Interfaces;
 using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Commands.AddIllustration;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using DesignGenerator.Application.Queries.Communicate;
-using System.Windows.Forms;
 using DesignGenerator.Application;
+using CommunityToolkit.Mvvm.Input;
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
     // TODO: обрезаются сообщения
@@ -139,9 +130,9 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             _templateParser = templateParser;
 
             //Инициализация команд
-            SendMessageCommand = new RelayCommand(SendMessage);
+            SendMessageCommand = new AsyncRelayCommand(SendMessage);
             ToggleSelectionModeCommand = new RelayCommand(ToggleSelectionMode);
-            GenerateImageCommand = new RelayCommand(GenerateImage);
+            GenerateImageCommand = new AsyncRelayCommand(GenerateImage);
             GenerateMultipleImagesCommand = new RelayCommand(GenerateMultipleImages);
             TextSelectedCommand = new RelayCommand(OnTextSelected);
 
@@ -163,7 +154,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                     ?? throw new Exception("Unable to find DefaultImageFolder in appsettings.json");
         }
 
-        private async void SendMessage(object parameter)
+        private async Task SendMessage()
         {
             if (!string.IsNullOrWhiteSpace(UserInput))
             {
@@ -175,10 +166,10 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                 {
                     Query = UserInput
                 };
-                var result = _queryDispatcher.Send<CommunicateQuery, CommunicateQueryResponse>(communicateQuery).Result;
+                var response = await _queryDispatcher.Send<CommunicateQuery, CommunicateQueryResponse>(communicateQuery);
 
                 Messages.Remove(processingMessage);
-                Messages.Add(new ChatMessageViewModel { Text = result.Response, IsBotMessage = true });
+                Messages.Add(new ChatMessageViewModel { Text = response.Message, IsBotMessage = true });
                 UserInput = string.Empty;
             }
         }
@@ -214,7 +205,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
-        private async void GenerateImage(object parameter)
+        private async Task GenerateImage()
         {
             WorkingStatus = "Image creating in progress";
             CanGenerateImages = false;
@@ -231,10 +222,11 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             var addCommand = new AddIllustrationCommand
             {
                 Title = ImageTitle,
-                Description = ImageDescription,
-                IllustrationFolder = fullFolderPath
+                Prompt = ImageDescription,
+                IllustrationPath = GeneratedImagePath,
+                IsReviewed = true
             };
-            _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
+            await _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
 
             CanGenerateImages = true;
             WorkingStatus = "Image creating completed";

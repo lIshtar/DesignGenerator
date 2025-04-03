@@ -19,7 +19,7 @@ namespace DesignGenerator.Application.Queries.Communicate
         public async Task<CommunicateQueryResponse> Handle(CommunicateQuery query)
         {
             string response = await _textAICommunicator.GetTextAnswerAsync(query.Query);
-            return new CommunicateQueryResponse { Response = response };
+            return new CommunicateQueryResponse { Message = response };
         }
     }
 }

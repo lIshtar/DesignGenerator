@@ -47,9 +47,10 @@ namespace DesignGeneratorUI.ViewModels
 
             MenuItems = new ObservableCollection<MenuItemViewModel>
             {
-                new MenuItemViewModel("Home", "Images/homeicon.png", pageFactory.CreatePage<HomePage>()),
+                //new MenuItemViewModel("Home", "Images/homeicon.png", pageFactory.CreatePage<HomePage>()),
                 new MenuItemViewModel("Chat", "Images/languagemodelicon.png", pageFactory.CreatePage<MainInteractionPage>()),
-                new MenuItemViewModel("Export", "Images/securityicon.png", pageFactory.CreatePage<DataPage>())
+                new MenuItemViewModel("Export", "Images/securityicon.png", pageFactory.CreatePage<DataPage>()),
+                new MenuItemViewModel("Review", "Images/file.png", pageFactory.CreatePage<ImageViewerPage>()),
             };
 
             NavigateCommand = new RelayCommand(Navigate);

@@ -16,11 +16,11 @@ namespace DesignGenerator.Application.Commands
             _service = service;
         }
 
-        public void Send<T>(T command) where T : ICommand
+        public async Task Send<T>(T command) where T : ICommand
         {
             var handler = _service.GetService(typeof(ICommandHandler<T>));
             if (handler != null)
-                ((ICommandHandler<T>)handler).Handle(command);
+                await ((ICommandHandler<T>)handler).Handle(command);
             else
                 throw new Exception($"Command doesn't have any handler {command.GetType().Name}");
         }

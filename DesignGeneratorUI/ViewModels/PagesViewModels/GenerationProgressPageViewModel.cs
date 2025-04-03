@@ -2,19 +2,11 @@
 using DesignGenerator.Application.Commands.AddIllustration;
 using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Interfaces;
-using DesignGenerator.Application.Parsers;
-using DesignGeneratorUI.ViewModels.ElementsViewModel;
 using DesignGeneratorUI.ViewModels.Navigation;
 using DesignGeneratorUI.Views.Pages;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ICommand = System.Windows.Input.ICommand;
+using CommunityToolkit.Mvvm.Input;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
@@ -77,7 +69,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
             CancelCommand = new RelayCommand(CancelGeneration);
             GoToViewerCommand = new RelayCommand(GoToViewer);
-            StartGenerationCommand = new RelayCommand(StartGeneration);
+            StartGenerationCommand = new AsyncRelayCommand(StartGeneration);
         }
 
         private string GetImageFolder(IConfiguration configuration)
@@ -92,7 +84,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             _navigationService.NavigateTo<ImageViewerPage>();
         }
 
-        private async void StartGeneration(object argument)
+        private async Task StartGeneration()
         {
             try
             {
@@ -117,9 +109,10 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                     {
                         Title = _illustrationsTemplates[i].Title,
                         Prompt = _illustrationsTemplates[i].Prompt,
-                        IllustrationPath = createIllustrationQueryResponse.IllustrationPath
+                        IllustrationPath = createIllustrationQueryResponse.IllustrationPath,
+                        IsReviewed = false,
                     };
-                    _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
+                    await _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
                 }
 
                 ProgressText = "Генерация завершена!";
