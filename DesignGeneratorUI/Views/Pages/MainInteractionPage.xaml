@@ -90,7 +90,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="{Binding IsBotMessage, Converter={StaticResource BoolToHorizontalAlignmentConverter}, Mode=OneWay}"
+                                    HorizontalAlignment="{Binding IsBotMessage, Converter={StaticResource BoolToHorizontalAlignmentConverter}, Mode=TwoWay}"
                                     Margin="10">
                                     <!-- Чекбокс, если требуется -->
                                     <CheckBox Style="{StaticResource CustomRoundCheckBox}"
@@ -101,13 +101,12 @@
                                     <Border Background="{Binding IsBotMessage, Converter={StaticResource MessageBackgroundConverter}}"
                                         CornerRadius="15" Padding="10" MaxWidth="300">
                                         <TextBox x:Name="MessageRichTextBox" 
-                                             Text="{Binding Text}" 
+                                             Text="{Binding Text, Mode=TwoWay}" 
                                              FontSize="14" 
                                              Foreground="#333" 
                                              Background="{Binding IsBotMessage, Converter={StaticResource MessageBackgroundConverter}}" 
                                              BorderBrush="Transparent" 
                                              BorderThickness="0" 
-                                             IsReadOnly="True" 
                                              VerticalScrollBarVisibility="Auto"
                                              TextWrapping="Wrap"
                                              helpers:TextBoxHelper.BindToSelectedText="True"/>

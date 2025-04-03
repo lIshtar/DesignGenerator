@@ -13,7 +13,6 @@ using DesignGenerator.Application;
 using CommunityToolkit.Mvvm.Input;
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
-    // TODO: обрезаются сообщения
     public class MainInteractionPageViewModel : BaseViewModel
     {
         private string _saveFolder;
@@ -156,20 +155,28 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         private async Task SendMessage()
         {
+            
             if (!string.IsNullOrWhiteSpace(UserInput))
             {
                 Messages.Add(new ChatMessageViewModel { Text = UserInput, IsBotMessage = false });
                 var processingMessage = new ChatMessageViewModel { Text = "Processing...", IsBotMessage = true };
                 Messages.Add(processingMessage);
 
-                var communicateQuery = new CommunicateQuery
-                {
-                    Query = UserInput
-                };
-                var response = await _queryDispatcher.Send<CommunicateQuery, CommunicateQueryResponse>(communicateQuery);
+                var response = new CommunicateQueryResponse();
+                var message = new ChatMessageViewModel { IsBotMessage = true };
+
+                await Task.Run(async () => {
+                    var communicateQuery = new CommunicateQuery
+                    {
+                        Query = UserInput
+                    };
+                    response = await _queryDispatcher.Send<CommunicateQuery, CommunicateQueryResponse>(communicateQuery);
+                    message.Text = response.Message;
+                });
+                
 
                 Messages.Remove(processingMessage);
-                Messages.Add(new ChatMessageViewModel { Text = response.Message, IsBotMessage = true });
+                Messages.Add(message);
                 UserInput = string.Empty;
             }
         }

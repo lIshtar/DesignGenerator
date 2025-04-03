@@ -15,6 +15,7 @@ using DesignGeneratorUI.ViewModels;
 using Microsoft.EntityFrameworkCore.Metadata;
 using DesignGeneratorUI.ViewModels.Navigation;
 using DesignGeneratorUI.Fabrics;
+using DesignGeneratorUI.Views.Pages;
 
 namespace DesignGeneratorUI.Views
 {
@@ -30,7 +31,7 @@ namespace DesignGeneratorUI.Views
             DataContext = mainWindowViewModel;
 
             navigationService.SelectFrame(MainFrame);
-            navigationService.NavigateTo<HomePage>();
+            navigationService.NavigateTo<MainInteractionPage>();
         }
     }
 }
