@@ -13,13 +13,7 @@ namespace DesignGenerator.Application.Mappers
     {
         public AddIllustrationCommandProfile()
         {
-            CreateMap<AddIllustrationCommand, Illustration>()
-            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
-            .ForMember(dest => dest.Prompt, opt => opt.MapFrom(src => src.Prompt))
-            .ForMember(dest => dest.IllustrationPath, opt => opt.MapFrom(src => src.IllustrationPath))
-            .ForMember(dest => dest.IsReviewed, opt => opt.MapFrom(src => src.IsReviewed))
-            .ReverseMap();
-            //.ForMember(dest => dest.Id, opt => opt.Ignore());
+            CreateMap<AddIllustrationCommand, Illustration>().ReverseMap();
         }
     }
 }

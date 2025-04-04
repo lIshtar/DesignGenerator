@@ -31,7 +31,15 @@ namespace DesignGenerator.Infrastructure.Database
 
         public async Task<IEnumerable<Illustration>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
+            try
+            {
+                return await _dbSet.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при загрузке данных: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<Illustration> GetByIdAsync(int id)

@@ -61,20 +61,20 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             _queryDispatcher = queryDispatcher;
             _commandDispatcher = commandDispatcher;
 
-            NextImageCommand = new RelayCommand(NextImage);
+            NextImageCommand = new AsyncRelayCommand(NextImage);
             RegenerateCommand = new AsyncRelayCommand(RegenerateImage, () => IsRegenerateEnabled);
 
-            InitializeIllustrations();
+            //InitializeIllustrations();
 
             // Инициализация данных
-            if (_illustrations is not null)
-            {
-                _illustrationIndex = 0;
+            //if (_illustrations is not null)
+            //{
+            //    _illustrationIndex = -1;
 
-                Title = _illustrations[_illustrationIndex].Title;
-                Prompt = _illustrations[_illustrationIndex].Prompt;
-                ImageSource = _illustrations[_illustrationIndex].IllustrationPath;
-            }
+            //    Title = _illustrations[_illustrationIndex].Title;
+            //    Prompt = _illustrations[_illustrationIndex].Prompt;
+            //    ImageSource = _illustrations[_illustrationIndex].IllustrationPath;
+            //}
             
         }
 
@@ -86,16 +86,23 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             _illustrations = response.Illustrations;
         }
 
-        private void NextImage(object argument)
+        private async Task NextImage()
         {
-            _illustrationIndex++;
+            if (_illustrations is null)
+            {
+                await InitializeIllustrations();
+                _illustrationIndex = 0;
+            }
+            else
+            {
+                _illustrationIndex++;
+            }
 
             Title = _illustrations[_illustrationIndex].Title;
             Prompt = _illustrations[_illustrationIndex].Prompt;
             ImageSource = _illustrations[_illustrationIndex].IllustrationPath;
         }
 
-        // TODO: Пересмотреть IllustrationFolder
         private async Task RegenerateImage()
         {
             var createCommand = new CreateIllustrationQuery

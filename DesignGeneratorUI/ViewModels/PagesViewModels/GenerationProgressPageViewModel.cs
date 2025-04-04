@@ -127,17 +127,17 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                     {
                         ProgressText = $"Генерация... {ProgressValue / numberOfImages * 100}%";
                     });
-                    
 
-                    //var addCommand = new AddIllustrationCommand
-                    //{
-                    //    Title = _illustrationsTemplates[i].Title,
-                    //    Prompt = _illustrationsTemplates[i].Prompt,
-                    //    IllustrationPath = createIllustrationQueryResponse.IllustrationPath,
-                    //    IsReviewed = false,
-                    //};
 
-                    //await Task.Run(() => _commandDispatcher.Send<AddIllustrationCommand>(addCommand));
+                    var addCommand = new AddIllustrationCommand
+                    {
+                        Title = _illustrationsTemplates[i].Title,
+                        Prompt = _illustrationsTemplates[i].Prompt,
+                        IllustrationPath = createIllustrationQueryResponse.IllustrationPath,
+                        IsReviewed = false,
+                    };
+
+                    await Task.Run(() => _commandDispatcher.Send<AddIllustrationCommand>(addCommand));
                 }
 
                 await Application.Current.Dispatcher.InvokeAsync(() =>
