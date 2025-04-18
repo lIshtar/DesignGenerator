@@ -8,6 +8,7 @@ using DesignGenerator.Application;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
+    // TODO: добавить возможность внесения изменений в данные
     public class DescriptionsViewerPageViewModel : BaseViewModel
     {
         public ObservableCollection<IllustrationTemplate> DataItems { get; set; }

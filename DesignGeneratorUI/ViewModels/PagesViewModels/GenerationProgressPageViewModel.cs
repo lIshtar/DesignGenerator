@@ -11,6 +11,7 @@ using Application = System.Windows.Application;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
+    // TODO: Еще раз поработать над положением кнопок
     public class GenerationProgressPageViewModel : BaseViewModel
     {
         private readonly CancellationTokenSource _cts;

@@ -1,44 +1,26 @@
 ﻿using DesignGenerator.Application.Commands.AddIllustration;
 using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Interfaces;
-using DesignGenerator.Application.Parsers;
-using DesignGeneratorUI.ViewModels.ElementsViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ICommand = System.Windows.Input.ICommand;
 using CommunityToolkit.Mvvm.Input;
 using DesignGenerator.Domain;
 using DesignGenerator.Application.Queries.GetUnreviewedIllustrations;
+using DesignGenerator.Application.Commands.UpdateIllustration;
+using DesignGeneratorUI.ViewModels.ElementsViewModel;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
-    // TODO: Пришить БД
-    public class ImageViewerPageViewModel : BaseViewModel
+    // TODO: добавить кнопку: показать альтернативы. (смотреть в папку)
+    // TODO: Возможность выбора лучшего изображения из папки?
+    public partial class ImageViewerPageViewModel : BaseViewModel
     {
-        private string? _title;
-        private string? _prompt;
-        private string? _imageSource;
+        private CreatedIllustrationViewModel _selectedIllustration;
         private bool _isRegenerateEnabled;
 
-        public string? Title
+        public CreatedIllustrationViewModel SelectedIllustration
         {
-            get => _title;
-            set { _title = value; OnPropertyChanged(nameof(Title)); }
-        }
-
-        public string? Prompt
-        {
-            get => _prompt;
-            set { _prompt = value; OnPropertyChanged(nameof(Prompt)); }
-        }
-
-        public string? ImageSource
-        {
-            get => _imageSource;
-            set { _imageSource = value; OnPropertyChanged(nameof(ImageSource)); }
+            get => SelectedIllustration;
+            set { SelectedIllustration = value; OnPropertyChanged(nameof(SelectedIllustration)); }
         }
 
         public bool IsRegenerateEnabled
@@ -47,8 +29,9 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             set { _isRegenerateEnabled = value; OnPropertyChanged(nameof(IsRegenerateEnabled)); }
         }
 
-        public ICommand NextImageCommand { get; }
-        public ICommand RegenerateCommand { get; }
+        public ICommand NextImageCommand { get; private set; }
+        public ICommand RegenerateCommand { get; private set; }
+        public ICommand MarkAsReviewedCommand { get; private set; }
 
         private List<Illustration>? _illustrations;
         private int _illustrationIndex;
@@ -61,24 +44,16 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             _queryDispatcher = queryDispatcher;
             _commandDispatcher = commandDispatcher;
 
-            NextImageCommand = new AsyncRelayCommand(NextImage);
-            RegenerateCommand = new AsyncRelayCommand(RegenerateImage, () => IsRegenerateEnabled);
-
-            //InitializeIllustrations();
-
-            // Инициализация данных
-            //if (_illustrations is not null)
-            //{
-            //    _illustrationIndex = -1;
-
-            //    Title = _illustrations[_illustrationIndex].Title;
-            //    Prompt = _illustrations[_illustrationIndex].Prompt;
-            //    ImageSource = _illustrations[_illustrationIndex].IllustrationPath;
-            //}
-            
+            InitializeCommands();
         }
 
-        // TODO: Реализовать метод получения данных об иллюстрации
+        private void InitializeCommands()
+        {
+            NextImageCommand = new AsyncRelayCommand(NextImage);
+            RegenerateCommand = new AsyncRelayCommand(RegenerateImage, () => IsRegenerateEnabled);
+            MarkAsReviewedCommand = new AsyncRelayCommand(MarkAsReviewed);
+        }
+
         private async Task InitializeIllustrations()
         {
             var command = new GetUnreviewedIllustrationsQuery();
@@ -88,7 +63,8 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         private async Task NextImage()
         {
-            if (_illustrations is null)
+            if (_illustrations is null || 
+                _illustrationIndex == _illustrations.Count - 1)
             {
                 await InitializeIllustrations();
                 _illustrationIndex = 0;
@@ -98,29 +74,58 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                 _illustrationIndex++;
             }
 
-            Title = _illustrations[_illustrationIndex].Title;
-            Prompt = _illustrations[_illustrationIndex].Prompt;
-            ImageSource = _illustrations[_illustrationIndex].IllustrationPath;
+            if (_illustrations is null || !_illustrations.Any())
+                return;
+
+            var current = _illustrations[_illustrationIndex];
+
+            SelectedIllustration = new CreatedIllustrationViewModel
+            {
+                Title = current.Title,
+                Prompt = current.Prompt,
+                IllustrationPath = current.IllustrationPath,
+            };
         }
 
         private async Task RegenerateImage()
         {
             var createCommand = new CreateIllustrationQuery
             {
-                Prompt = Prompt,
-                FolderPath = ImageSource
+                Prompt = SelectedIllustration.Prompt,
+                FolderPath = SelectedIllustration.IllustrationPath
             };
             var response = await _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand);
-            ImageSource = response.IllustrationPath;
+            SelectedIllustration.IllustrationPath = response.IllustrationPath;
 
             var addCommand = new AddIllustrationCommand
             {
-                Title = this.Title,
-                Prompt = this.Prompt,
-                IllustrationPath = ImageSource
+                Title = SelectedIllustration.Title,
+                Prompt = SelectedIllustration.Prompt,
+                IllustrationPath = SelectedIllustration.IllustrationPath
             };
             await _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
             IsRegenerateEnabled = false;
+        }
+
+        private async Task MarkAsReviewed()
+        {
+            if (_illustrations is not null &&
+                _illustrations.Count > _illustrationIndex)
+            {
+                var current = _illustrations[_illustrationIndex];
+                current.IsReviewed = true;
+                var updateCommand = new UpdateIllustrationCommand
+                { 
+                    Id = current.Id,
+                    Title = current .Title,
+                    Prompt = current.Prompt,
+                    IllustrationPath = current.IllustrationPath,
+                    IsReviewed = current.IsReviewed,
+                };
+
+
+                await _commandDispatcher.Send<UpdateIllustrationCommand>(updateCommand);
+            }
         }
     }
 }

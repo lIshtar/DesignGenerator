@@ -50,6 +50,10 @@
             <Button Content="🔄 Перегенерировать" Padding="10" Height="40" Width="150" 
                     Background="#28A745" Foreground="White" FontWeight="Bold" 
                     Command="{Binding RegenerateCommand}" Margin="5"/>
+
+            <Button Content="✅ Отметить проверенным" Padding="10" Height="40" Width="180"
+                    Background="#6C757D" Foreground="White" FontWeight="Bold"
+                    Command="{Binding MarkAsReviewedCommand}" Margin="5"/>
         </StackPanel>
     </Grid>
 </Page>

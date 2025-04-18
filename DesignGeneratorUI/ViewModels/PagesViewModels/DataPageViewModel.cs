@@ -12,13 +12,16 @@ using System.Windows.Input;
 using DesignGeneratorUI.FileServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using DesignGenerator.Application.Interfaces;
+using ICommand = System.Windows.Input.ICommand;
+using DesignGenerator.Domain;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
     public class DataPageViewModel : BaseViewModel
     {
         private string? _savePath;
-        private ObservableCollection<PrintedData> _dataList;
+        private ObservableCollection<Illustration> _dataList;
 
         public string? SavePath
         {
@@ -31,7 +34,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
-        public ObservableCollection<PrintedData> DataList
+        public ObservableCollection<Illustration> DataList
         {
             get => _dataList;
             set 
@@ -44,16 +47,16 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private readonly IOpenDialogService _dialogService;
         private readonly IFileService _fileService;
         private readonly IConfiguration _config;
-        //private readonly ApplicationDbContext _dbContext;
+        private readonly IQueryDispatcher _queryDispatcher;
 
         public ICommand BrowseCommand { get; }
         public ICommand ExportToExcelCommand { get; }
 
-        public DataPageViewModel(IFileService fileService, IOpenDialogService dialogService, IConfiguration config)
+        public DataPageViewModel(IFileService fileService, IOpenDialogService dialogService, IQueryDispatcher queryDispatcher, IConfiguration config)
         {
             _fileService = fileService;
             _dialogService = dialogService;
-            //_dbContext = dbContext;
+            _queryDispatcher = queryDispatcher;
             _config = config;
 
             SavePath = _config.GetRequiredSection("Folders")
@@ -100,25 +103,10 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
+        //TODO: implement data loading with RequiredDate
         private void LoadData()
         {
-            //var data = from items in _dbContext.Items
-            //           join il in _dbContext.Illustrations on items.Id equals il.Item
-            //           join c in _dbContext.Categories on items.Category equals c.Id
-            //           join p in _dbContext.Patterns on items.Pattern equals p.Id
-            //           select new PrintedData
-            //           (
-            //               items.Name,
-            //               c.Name,
-            //               p.Name,
-            //               il.Prompt,
-            //               il.Path,
-            //               il.IllustrationText
-            //           );
-
-            //DataList = new ObservableCollection<PrintedData>(data.Take(10));
+            //DataList = 
         }
-
-        public record PrintedData(string? Name, string? Category, string? Pattern, string? Prompt, string? IllustrationPath, string? IllustrationText);
     }
 }

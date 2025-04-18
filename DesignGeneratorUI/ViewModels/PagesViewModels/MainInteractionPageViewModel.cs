@@ -14,6 +14,7 @@ using CommunityToolkit.Mvvm.Input;
 using System.Windows.Threading;
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
+    // TODO: добавить контекстное меню (?) для добавления, изменения, удаления промптов, добавить к чату ярлык для использования промпта
     public class MainInteractionPageViewModel : BaseViewModel
     {
         private string _saveFolder;
