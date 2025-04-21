@@ -18,7 +18,7 @@ namespace DesignGenerator.Infrastructure.DBEntities
         public string Title { get; set; }
         public string Prompt { get; set; }
         public string IllustrationPath { get; set; }
-        public DateTime GenerationDate { get; set; }
+        public DateTime GenerationDate { get; set; } = DateTime.Now;
         public bool IsReviewed { get; set; }
 
         //[ForeignKey("item")]

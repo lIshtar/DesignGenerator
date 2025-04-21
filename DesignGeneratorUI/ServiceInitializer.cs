@@ -46,7 +46,7 @@ namespace DesignGeneratorUI
 
             // Добавляем все сервисы
             services.AddSingleton<INavigationService, NavigationService>();
-            services.AddTransient<IFileService, ExcelFileService>();
+            services.AddTransient<IFileService, NpoiExcelFileService>();
             services.AddTransient<IOpenDialogService, FolderDialogService>();
 
             return services;

@@ -9,27 +9,57 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Выбор пути сохранения файла -->
-        <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+
+
+        <!-- Фильтрация по дате -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10" Grid.Row="0">
+            <TextBlock Text="Дата с:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <DatePicker SelectedDate="{Binding DateFrom}" Width="120" Margin="0,0,10,0"/>
+
+            <TextBlock Text="по:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <DatePicker SelectedDate="{Binding DateTo}" Width="120"/>
+
+            <Button Content="Применить фильтр" Command="{Binding FilterCommand}" Margin="10,0,0,0"/>
+        </StackPanel>
+
+        <!-- Выбор нужных полей -->
+        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0,0,0,10">
+            <CheckBox Content="Экспортировать статус проверки" IsChecked="{Binding IncludeReviewing}"/>
+            <CheckBox Content="Экспортировать дату создания" IsChecked="{Binding IncludeGenerationDate}"/>
+        </StackPanel>
+
+        <!-- Таблица данных -->
+        <StackPanel Grid.Row="2" Orientation="Vertical" Margin="0,0,0,10">
+            <TextBlock Text="Предпросмотр данных:" FontWeight="Bold" Margin="0,10,0,5"/>
+            <DataGrid ItemsSource="{Binding FilteredIllustrations}"
+                      AutoGenerateColumns="True"
+                      Margin="0 10 0 0"
+                      IsReadOnly="True">
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Название" Binding="{Binding Title}" />
+                    <DataGridTextColumn Header="Промпт" Binding="{Binding Prompt}" />
+                    <DataGridTextColumn Header="Путь" Binding="{Binding IllustrationPath}" />
+                    <DataGridTextColumn Header="Проверено" Binding="{Binding IsReviewed}" />
+                    <DataGridTextColumn Header="Создано" Binding="{Binding GenerationDate}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+
+                <!-- Выбор пути сохранения файла -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0 0 0 10">
             <TextBox Width="300" Text="{Binding SavePath}" IsReadOnly="True" Margin="0 0 10 0"/>
             <Button Content="Обзор..." Padding="5" Command="{Binding BrowseCommand}"/>
         </StackPanel>
-
         <!-- Кнопка экспорта -->
-        <Button Grid.Row="1"
-                Content="Экспорт в Excel"
-                HorizontalAlignment="Left"
-                Padding="10"
-                Margin="0 10 0 0"
-                Command="{Binding ExportToExcelCommand}"/>
-
-        <!-- Таблица данных -->
-        <DataGrid Grid.Row="2"
-                  ItemsSource="{Binding DataList}"
-                  AutoGenerateColumns="True"
-                  Margin="0 10 0 0"
-                  IsReadOnly="True"/>
+        <Button Grid.Row="4" Content="📁 Экспортировать в Excel" 
+            Command="{Binding ExportToExcelCommand}" Height="40" Width="220" 
+            HorizontalAlignment="Center" Margin="0,10,0,0"/>
     </Grid>
 </Page>

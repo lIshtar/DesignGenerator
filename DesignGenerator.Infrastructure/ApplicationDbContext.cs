@@ -39,6 +39,8 @@ namespace DesignGenerator.Infrastructure
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
             optionsBuilder.UseNpgsql(connectionString);
         }
     }

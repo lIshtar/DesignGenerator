@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
 
         <!-- Заголовок -->
-        <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="Bold" 
+        <TextBlock Text="{Binding SelectedIllustration.Title}" FontSize="24" FontWeight="Bold" 
                    Foreground="#333" HorizontalAlignment="Center" Margin="0,0,0,10"/>
 
         <!-- Основная область -->
@@ -29,7 +29,7 @@
             <!-- Поле редактирования промпта с бордером -->
             <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="10" 
                     BorderBrush="#CCC" BorderThickness="1">
-                <TextBox Text="{Binding Prompt}" FontSize="14" 
+                <TextBox Text="{Binding SelectedIllustration.Prompt}" FontSize="14" 
                          Background="White" Foreground="#333" BorderThickness="0" 
                          Padding="10" Height="350" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
             </Border>
@@ -37,7 +37,7 @@
             <!-- Изображение -->
             <Border Grid.Column="1" Background="White" CornerRadius="10" Padding="10" 
                     BorderBrush="#CCC" BorderThickness="1" HorizontalAlignment="Center">
-                <Image Source="{Binding ImageSource}" Width="500" Height="350" Stretch="Uniform"/>
+                <Image Source="{Binding SelectedIllustration.ImageSource}" Width="500" Height="350" Stretch="Uniform"/>
             </Border>
         </Grid>
 

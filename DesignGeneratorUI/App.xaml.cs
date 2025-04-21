@@ -32,8 +32,6 @@ namespace DesignGeneratorUI
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
             _config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .Build();

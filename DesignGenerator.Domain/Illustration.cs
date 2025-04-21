@@ -7,5 +7,6 @@
         public string Prompt { get; set; }
         public string IllustrationPath { get; set; }
         public bool IsReviewed { get; set; }
+        public DateTime GenerationDate { get; set; }
     }
 }

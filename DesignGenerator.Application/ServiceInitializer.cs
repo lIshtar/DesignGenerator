@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DesignGenerator.Application.Mappers;
+using DesignGenerator.Application.Queries.GetAllIllustrations;
 
 namespace DesignGenerator.Application
 {
@@ -27,6 +28,7 @@ namespace DesignGenerator.Application
 
             services.AddTransient<IQueryDispatcher, QueryDispatcher>();
             services.AddTransient<IQueryHandler<CommunicateQuery, CommunicateQueryResponse>, CommunicateQueryHandler>();
+            services.AddTransient<IQueryHandler<GetAllIllustrationQuery, GetAllIllustrationQueryResponse>, GetAllIllustrationQueryHandler>();
             services.AddTransient<IQueryHandler<GetUnreviewedIllustrationsQuery, GetUnreviewedIllustrationsQueryResponse>, GetUnreviewedIllustrationsQueryHandler>();
             services.AddTransient<IQueryHandler<CreateIllustrationQuery, CreateIllustrationQueryResponse>, CreateIllustrationQueryHandler>();
 

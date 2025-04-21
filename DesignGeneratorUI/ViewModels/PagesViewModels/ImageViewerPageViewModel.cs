@@ -19,8 +19,8 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         public CreatedIllustrationViewModel SelectedIllustration
         {
-            get => SelectedIllustration;
-            set { SelectedIllustration = value; OnPropertyChanged(nameof(SelectedIllustration)); }
+            get => _selectedIllustration;
+            set { _selectedIllustration = value; OnPropertyChanged(nameof(SelectedIllustration)); }
         }
 
         public bool IsRegenerateEnabled
