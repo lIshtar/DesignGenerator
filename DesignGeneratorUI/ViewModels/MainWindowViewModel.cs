@@ -52,6 +52,7 @@ namespace DesignGeneratorUI.ViewModels
                 new MenuItemViewModel("Export", "Images/securityicon.png", pageFactory.CreatePage<DataPage>()),
                 new MenuItemViewModel("Review", "Images/file.png", pageFactory.CreatePage<ImageViewerPage>()),
                 new MenuItemViewModel("Prompts", "Images/text-to-image.png", pageFactory.CreatePage<PromptManagerPage>()),
+                new MenuItemViewModel("History", "Images/image.png", pageFactory.CreatePage<ImageHistoryPage>()),
             };
 
             NavigateCommand = new RelayCommand<Page>(Navigate);
