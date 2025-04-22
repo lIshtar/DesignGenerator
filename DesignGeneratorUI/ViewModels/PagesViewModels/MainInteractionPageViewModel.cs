@@ -12,9 +12,10 @@ using DesignGenerator.Application.Queries.Communicate;
 using DesignGenerator.Application;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Threading;
+using DesignGenerator.Domain;
+using DocumentFormat.OpenXml.Office.CustomUI;
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
-    // TODO: добавить контекстное меню (?) для добавления, изменения, удаления промптов, добавить к чату ярлык для использования промпта
     public class MainInteractionPageViewModel : BaseViewModel
     {
         private string _saveFolder;
@@ -29,6 +30,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private string? _selectedText;
 
         public ObservableCollection<ChatMessageViewModel> Messages { get; set; } = new();
+        public ObservableCollection<Prompt> SavedPrompts { get; set; } = new();
 
         public string? UserInput
         {
@@ -112,6 +114,8 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         public ICommand ToggleSelectionModeCommand { get; }
         public ICommand GenerateImageCommand { get; }
         public ICommand GenerateMultipleImagesCommand { get; }
+        public ICommand InsertPromptCommand { get; }
+        public ICommand NavigateToPromptManagerCommand { get; }
 
         private INavigationService _navigationService;
         private ICommandDispatcher _commandDispatcher;
@@ -135,17 +139,26 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             ToggleSelectionModeCommand = new RelayCommand(ToggleSelectionMode);
             GenerateImageCommand = new AsyncRelayCommand(GenerateImage);
             GenerateMultipleImagesCommand = new RelayCommand(GenerateMultipleImages);
-            TextSelectedCommand = new RelayCommand(OnTextSelected);
+            TextSelectedCommand = new RelayCommand<string>(OnTextSelected);
+            InsertPromptCommand = new RelayCommand<Prompt>(InsertPrompt);
+            NavigateToPromptManagerCommand = new RelayCommand(NavigateToPromptManager);
 
             _saveFolder = GetImageFolder(configuration);
             GeneratedImagePath = GetDefaultImagePath();
-            SelectedText = "";
+            SavedPrompts = LoadPrompts();
 
             // Тестовые сообщения
             Messages.Add(new ChatMessageViewModel { Text = "Вот пример двух объектов в формате JSON с полями `Title` и `Prompt`, которые могут использоваться для иллюстрации:\r\n\r\n```json\r\n[\r\n    {\r\n        \"Title\": \"Тайный сад\",\r\n        \"Prompt\": \"Изображение волшебного сада, полного ярких цветов и таинственных существ, с солнечными лучами, пробивающимися сквозь листву.\"\r\n    },\r\n    {\r\n        \"Title\": \"Космическое путешествие\",\r\n        \"Prompt\": \"Иллюстрация космического корабля, плывущего сквозь галактику, окруженного звездами и планетами, с яркими цветными туманностями на фоне.\"\r\n    }\r\n]\r\n```\r\n\r\nЭти объекты содержат названия иллюстраций и описания, которые могут быть использованы для их создания.", IsBotMessage = true });
-            _templateParser = templateParser;
         }
 
+        // TODO: implement DB with prompts
+        private ObservableCollection<Prompt> LoadPrompts()
+        {
+            return new ObservableCollection<Prompt>
+            {
+                new Prompt{Text = "abracadabra", Name = "Test"}
+            };
+        }
         private string GetDefaultImagePath() => Directory.GetCurrentDirectory() + "\\Images\\DefaultImage.png";
 
         private string GetImageFolder(IConfiguration configuration)
@@ -157,7 +170,6 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         private async Task SendMessage()
         {
-            
             if (!string.IsNullOrWhiteSpace(UserInput))
             {
                 Messages.Add(new ChatMessageViewModel { Text = UserInput, IsBotMessage = false });
@@ -182,7 +194,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
-        private void OnTextSelected(object? parameter)
+        private void OnTextSelected(string? parameter)
         {
             if (parameter is string selectedText)
             {
@@ -204,7 +216,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
-        private void ToggleSelectionMode(object parameter)
+        private void ToggleSelectionMode()
         {
             foreach (var mes in Messages)
             {
@@ -234,27 +246,44 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                 IllustrationPath = response.IllustrationPath,
                 IsReviewed = true
             };
-            await Task.Run(() => _commandDispatcher.Send<AddIllustrationCommand>(addCommand));
+            await Task.Run(() => _commandDispatcher.Send(addCommand));
 
             CanGenerateImages = true;
             WorkingStatus = "Image creating completed";
         }
 
-        private void GenerateMultipleImages(object parameter)
+        private void GenerateMultipleImages()
         {
             var selectedMessages = Messages.Where(x => x.IsSelected).ToList();
             var illustrationTemplates = IllustrationTemplatesContainer.GetInstance().IllustrastionsTemplates;
+            illustrationTemplates.Clear();
             foreach (var message in selectedMessages)
             {
+                  
                 var templates = _templateParser.ParseMany(message.Text);
                 foreach (var template in templates)
                 {
-                    if (illustrationTemplates.Where(x => x.Title == template.Title && x.Prompt == template.Prompt).Count() == 0)
-                        illustrationTemplates.Add(template);
+                    illustrationTemplates.Add(template);
                 }
             }
             IllustrationTemplatesContainer.GetInstance().IllustrastionsTemplates = illustrationTemplates;
             _navigationService.NavigateTo<DescriptionsViewerPage>();
+        }
+
+        private void InsertPrompt(Prompt prompt)
+        {
+            if (prompt == null) return;
+
+            // Добавим текст промпта в начало строки ввода
+            if (!string.IsNullOrWhiteSpace(UserInput))
+                UserInput = prompt.Text + Environment.NewLine + UserInput;
+            else
+                UserInput = prompt.Text;
+        }
+
+        private void NavigateToPromptManager()
+        {
+            _navigationService.NavigateTo<PromptManagerPage>();
         }
     }
 }

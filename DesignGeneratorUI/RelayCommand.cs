@@ -7,31 +7,52 @@ using System.Windows.Input;
 
 namespace DesignGeneratorUI
 {
+    public class RelayCommand<T> : ICommand
+    {
+        private readonly Action<T> _execute;
+        private readonly Func<T, bool>? _canExecute;
+
+        public RelayCommand(Action<T> execute, Func<T, bool>? canExecute = null)
+        {
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
+        }
+
+        public event EventHandler? CanExecuteChanged
+        {
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
+        }
+
+        public bool CanExecute(object? parameter) =>
+            _canExecute == null || (parameter is T value && _canExecute(value));
+
+        public void Execute(object? parameter)
+        {
+            if (parameter is T value)
+                _execute(value);
+        }
+    }
+
     public class RelayCommand : ICommand
     {
-        private Action<object> execute;
-        private Func<object, bool> canExecute;
+        private readonly Action _execute;
+        private readonly Func<bool>? _canExecute;
 
-        public event EventHandler CanExecuteChanged
+        public RelayCommand(Action execute, Func<bool>? canExecute = null)
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
         }
 
-        public RelayCommand(Action<object> execute, Func<object, bool> canExecute = null)
+        public event EventHandler? CanExecuteChanged
         {
-            this.execute = execute;
-            this.canExecute = canExecute;
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
 
-        public bool CanExecute(object parameter)
-        {
-            return this.canExecute == null || this.canExecute(parameter);
-        }
+        public bool CanExecute(object? parameter) => _canExecute == null || _canExecute();
 
-        public void Execute(object parameter)
-        {
-            this.execute(parameter);
-        }
+        public void Execute(object? parameter) => _execute();
     }
 }

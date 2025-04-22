@@ -16,7 +16,7 @@
 
         <!-- Таблица данных -->
         <DataGrid Grid.Row="0" ItemsSource="{Binding DataItems}" AutoGenerateColumns="False"
-                  CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column">
+                  CanUserAddRows="False" CanUserDeleteRows="True" HeadersVisibility="Column">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Название" Binding="{Binding Title}" Width="*"/>
                 <DataGridTextColumn Header="Промпт" Binding="{Binding Prompt}" Width="2*"/>

@@ -32,6 +32,7 @@ namespace DesignGeneratorUI
             services.AddSingleton<GenerationProgressPage>();
             services.AddSingleton<DescriptionsViewerPage>();
             services.AddSingleton<ImageViewerPage>();
+            services.AddSingleton<PromptManagerPage>();
 
             // Добавляем все ViewModel страниц
             services.AddSingleton<DataPageViewModel>();
@@ -40,6 +41,7 @@ namespace DesignGeneratorUI
             services.AddSingleton<GenerationProgressPageViewModel>();
             services.AddSingleton<DescriptionsViewerPageViewModel>();
             services.AddSingleton<ImageViewerPageViewModel>();
+            services.AddSingleton<PromptManagerPageViewModel>();
 
             // Добавляем все фабрики
             services.AddTransient<IPageFactory, PageFactory>();

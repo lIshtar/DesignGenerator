@@ -7,9 +7,24 @@ using System.Threading.Tasks;
 
 namespace DesignGenerator.Application
 {
-    public class IllustrationTemplate
+    public class IllustrationTemplate : INotifyPropertyChanged
     {
-        public string Title { get; set; }
-        public string Prompt { get; set; }
+        public string _title;
+        public string _prompt;
+        public string Title
+        {
+            get { return _title; }
+            set { _title = value; OnPropertyChanged(nameof(Title)); }
+        }
+
+        public string Prompt
+        {
+            get { return _prompt; }
+            set { _prompt = value; OnPropertyChanged(nameof(Title)); }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

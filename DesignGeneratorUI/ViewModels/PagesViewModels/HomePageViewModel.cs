@@ -105,7 +105,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             BrowseFolderCommand = new RelayCommand(BrowseFolder);
         }
 
-        private async void GenerateImages(object parameter)
+        private async void GenerateImages()
         {
             StatusMessage = "Генерация картинок началась...";
             CanGenerateImages = false;
@@ -141,14 +141,14 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             StatusMessage = "Генерация картинок завершена.";
         }
 
-        private bool CanExecuteGenerateImages(object parameter)
+        private bool CanExecuteGenerateImages()
         {
             return CanGenerateImages;
         }
 
         
 
-        private void GenerateScript(object parameter)
+        private void GenerateScript()
         {
             StatusMessage = $"Генерация началась";
             // Пример логики генерации скрипта
@@ -186,7 +186,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         //    StatusMessage = $"Скрипт сгенерирован для {ElementCount} элементов.";
         //}
 
-        private void BrowseFolder(object obj)
+        private void BrowseFolder()
         {
             try
             {

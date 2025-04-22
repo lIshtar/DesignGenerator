@@ -114,7 +114,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         }
 
         // TODO: export to excel does not work (maybe normal office required)
-        private void ExportToExcel(object argument)
+        private void ExportToExcel()
         {
             try
             {
@@ -140,7 +140,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
-        private async void ApplyFilter(object argument)
+        private async void ApplyFilter()
         {
             var query = new GetAllIllustrationQuery();
             var response = await _queryDispatcher.Send<GetAllIllustrationQuery, GetAllIllustrationQueryResponse>(query);
@@ -155,7 +155,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
 
         //TODO: implement default path change
-        private void Browse(object argument)
+        private void Browse()
         {
             try
             {

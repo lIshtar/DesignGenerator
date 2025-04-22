@@ -6,8 +6,10 @@
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
       mc:Ignorable="d"
+      xmlns:domain="clr-namespace:DesignGenerator.Domain;assembly=DesignGenerator.Domain"
       xmlns:converters="clr-namespace:DesignGeneratorUI.Converters"
       xmlns:helpers="clr-namespace:DesignGeneratorUI.Helpers"
+      xmlns:vm="clr-namespace:DesignGeneratorUI.ViewModels.PagesViewModels"
       d:DesignHeight="500" d:DesignWidth="900">
 
     <Page.Resources>
@@ -16,6 +18,11 @@
         <converters:BoolToGridColumnConverter x:Key="BoolToGridColumnConverter"/>
         <converters:BoolToGridColumnInvertedConverter x:Key="BoolToGridColumnInvertedConverter"/>
         <converters:BoolToHorizontalAlignmentConverter x:Key="BoolToHorizontalAlignmentConverter"/>
+
+        <!-- Важно: указываем ObjectType и MethodName -->
+        <ObjectDataProvider x:Key="SavedPromptsProvider"
+                        ObjectType="{x:Type vm:MainInteractionPageViewModel}" 
+                        MethodName="GetSavedPrompts" />
 
         <!-- Современный стиль для CheckBox с круглым дизайном -->
         <Style x:Key="CustomRoundCheckBox" TargetType="CheckBox">
@@ -129,7 +136,30 @@
                     <TextBox Text="{Binding UserInput}" AcceptsReturn="True" Height="80"
                         TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
                         FontSize="14" Background="#FAFAFA" BorderThickness="1"
-                        Foreground="#333" Margin="0,0,10,0" Grid.Row="0"/>
+                        Foreground="#333" Margin="0,0,10,0" Grid.Row="0">
+                        <TextBox.ContextMenu>
+                            <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                <MenuItem Header="📌 Промпты">
+                                    <MenuItem.ItemsSource>
+                                        <Binding Path="SavedPrompts" />
+                                    </MenuItem.ItemsSource>
+                                    <MenuItem.ItemContainerStyle>
+                                        <Style TargetType="MenuItem">
+                                            <Setter Property="Header" Value="{Binding Name}" />
+                                            <Setter Property="Command" 
+                                                Value="{Binding DataContext.InsertPromptCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                            <Setter Property="CommandParameter" Value="{Binding}" />
+                                        </Style>
+                                    </MenuItem.ItemContainerStyle>
+                                </MenuItem>
+
+                                <Separator />
+
+                                <MenuItem Header="➕ Добавить промпт"
+                                    Command="{Binding NavigateToPromptManagerCommand}" />
+                            </ContextMenu>
+                        </TextBox.ContextMenu>
+                    </TextBox>
 
                     <Button Content="💬 Отправить" Command="{Binding SendMessageCommand}" Padding="10,5"
                         Background="#0078D7" Foreground="White" FontWeight="Bold"

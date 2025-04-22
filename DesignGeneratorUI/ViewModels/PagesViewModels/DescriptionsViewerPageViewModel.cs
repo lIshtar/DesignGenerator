@@ -29,12 +29,12 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             ReturnBackCommand = new RelayCommand(ReturnBack);
         }
 
-        private void StartCreation(object argument)
+        private void StartCreation()
         {
             _navigationService.NavigateTo<GenerationProgressPage>();
         }
 
-        private void ReturnBack(object argument)
+        private void ReturnBack()
         {
             _navigationService.NavigateBack();
         }

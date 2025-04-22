@@ -13,7 +13,7 @@ namespace DesignGeneratorUI.ViewModels.ElementsViewModel
         private bool _isSelectable;
         private bool _isBotMessage;
 
-        public string? Text { get; set; }
+        public string Text { get; set; }
         public bool IsBotMessage
         {
             get { return _isBotMessage; }

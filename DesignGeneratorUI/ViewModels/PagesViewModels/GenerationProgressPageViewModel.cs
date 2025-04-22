@@ -80,12 +80,12 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                     ?? throw new Exception("Unable to find DefaultImageFolder in appsettings.json");
         }
 
-        private void GoToViewer(object argument)
+        private void GoToViewer()
         {
             _navigationService.NavigateTo<ImageViewerPage>();
         }
 
-        private void ExecuteStartGeneration(object argument)
+        private void ExecuteStartGeneration()
         {
             var temp = NumberOfImages;
             Task.Run(() => StartGeneration(temp));
@@ -153,7 +153,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
-        private void CancelGeneration(object argument)
+        private void CancelGeneration()
         {
             _cts.Cancel();
             _navigationService.NavigateTo<MainInteractionPage>();
