@@ -5,13 +5,21 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+      xmlns:interactivity="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
       mc:Ignorable="d"
       xmlns:domain="clr-namespace:DesignGenerator.Domain;assembly=DesignGenerator.Domain"
       xmlns:converters="clr-namespace:DesignGeneratorUI.Converters"
       xmlns:helpers="clr-namespace:DesignGeneratorUI.Helpers"
       xmlns:vm="clr-namespace:DesignGeneratorUI.ViewModels.PagesViewModels"
-      d:DesignHeight="500" d:DesignWidth="900">
+      d:DesignHeight="500" d:DesignWidth="900"
+      >
 
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
     <Page.Resources>
         <converters:MessageBackgroundConverter x:Key="MessageBackgroundConverter"/>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>

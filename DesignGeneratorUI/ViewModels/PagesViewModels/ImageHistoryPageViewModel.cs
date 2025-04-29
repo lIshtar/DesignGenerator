@@ -1,4 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using DesignGenerator.Application.Interfaces;
+using DesignGenerator.Application.Queries.GetAllIllustrations;
 using DesignGenerator.Domain;
 using System;
 using System.Collections.Generic;
@@ -6,18 +9,18 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
+using ICommand = System.Windows.Input.ICommand;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
-    // TODO: implement db data
     public class ImageHistoryPageViewModel : ObservableObject
     {
+        private IQueryDispatcher _queryDispatcher;
         private const int PageSize = 6;
+        public ObservableCollection<Illustration> AllImages { get; set; } = new();
+        public ObservableCollection<Illustration> PagedImages { get; set; } = new();
 
-        public ObservableCollection<Illustration> AllImages { get; set; }
-        public ObservableCollection<Illustration> PagedImages { get; set; }
-        public ObservableCollection<int> PageNumbers { get; set; }
+        public ObservableCollection<int> PageNumbers { get; set; } = new();
 
         private int _currentPage = 1;
         public int CurrentPage
@@ -32,23 +35,26 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         public int TotalPages => (int)Math.Ceiling((double)AllImages.Count / PageSize);
 
+        public ICommand LoadedCommand { get; }
         public ICommand NextPageCommand { get; }
         public ICommand PreviousPageCommand { get; }
         public ICommand GoToPageCommand { get; }
 
-        public ImageHistoryPageViewModel()
+        public ImageHistoryPageViewModel(IQueryDispatcher queryDispatcher)
         {
-            AllImages = new ObservableCollection<Illustration>();
-            PagedImages = new ObservableCollection<Illustration>();
-            PageNumbers = new ObservableCollection<int>();
+            _queryDispatcher = queryDispatcher;
 
-            AllImages = InitializeImages();
-
+            LoadedCommand = new AsyncRelayCommand(Loaded);
             NextPageCommand = new RelayCommand(NextPage);
             PreviousPageCommand = new RelayCommand(PreviousPage);
             GoToPageCommand = new RelayCommand<int>(GoToPage);
 
             UpdatePagedImages();
+        }
+
+        private async Task Loaded()
+        {
+            PagedImages = await LoadImages();
         }
 
         private void NextPage()
@@ -86,9 +92,11 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                 PageNumbers.Add(i);
         }
 
-        private ObservableCollection<Illustration> InitializeImages()
+        private async Task<ObservableCollection<Illustration>> LoadImages()
         {
-            return null;
+            var query = new GetAllIllustrationQuery();
+            var response = await _queryDispatcher.Send<GetAllIllustrationQuery, GetAllIllustrationQueryResponse>(query);
+            return new ObservableCollection<Illustration>();
         }
     }
 }

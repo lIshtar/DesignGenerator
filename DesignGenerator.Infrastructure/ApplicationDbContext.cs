@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 using Microsoft.Extensions.Configuration;
 using DesignGenerator.Infrastructure.DBEntities;
+using DesignGenerator.Infrastructure.Database.DBEntities;
 
 namespace DesignGenerator.Infrastructure
 {
@@ -14,8 +15,9 @@ namespace DesignGenerator.Infrastructure
     {
         string connectionString;
         public DbSet<Message> Messages { get; set; } = null!;
-        public DbSet<Model> Patterns { get; set; } = null!;
+        public DbSet<Model> Models { get; set; } = null!;
         public DbSet<Illustration> Illustrations { get; set; } = null!;
+        public DbSet<Prompt> Prompts { get; set; } = null!;
 
         public ApplicationDbContext(IConfiguration config)
         {

@@ -48,17 +48,17 @@ namespace DesignGeneratorUI.ViewModels
             MenuItems = new ObservableCollection<MenuItemViewModel>
             {
                 //new MenuItemViewModel("Home", "Images/homeicon.png", pageFactory.CreatePage<HomePage>()),
-                new MenuItemViewModel("Chat", "Images/languagemodelicon.png", pageFactory.CreatePage<MainInteractionPage>()),
-                new MenuItemViewModel("Export", "Images/securityicon.png", pageFactory.CreatePage<DataPage>()),
-                new MenuItemViewModel("Review", "Images/file.png", pageFactory.CreatePage<ImageViewerPage>()),
-                new MenuItemViewModel("Prompts", "Images/text-to-image.png", pageFactory.CreatePage<PromptManagerPage>()),
-                new MenuItemViewModel("History", "Images/image.png", pageFactory.CreatePage<ImageHistoryPage>()),
+                new MenuItemViewModel("Chat", "Images/languagemodelicon.png", () => pageFactory.CreatePage<MainInteractionPage>()),
+                new MenuItemViewModel("Export", "Images/securityicon.png", () => pageFactory.CreatePage<DataPage>()),
+                new MenuItemViewModel("Review", "Images/file.png", () => pageFactory.CreatePage<ImageViewerPage>()),
+                new MenuItemViewModel("Prompts", "Images/text-to-image.png", () => pageFactory.CreatePage<PromptManagerPage>()),
+                new MenuItemViewModel("History", "Images/image.png", () => pageFactory.CreatePage<ImageHistoryPage>()),
             };
 
             NavigateCommand = new RelayCommand<Page>(Navigate);
         }
        
-        private void Navigate(object? argument)
+        private void Navigate(object argument)
         {
             if (argument is Page page)
             {

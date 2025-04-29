@@ -13,10 +13,12 @@ namespace DesignGeneratorUI.ViewModels
     public class MenuItemViewModel
     {
         public string? Title { get; }
-        public Page? Page { get; }
+        private readonly Func<Page> _pageFactory;
+        private Page _cachedPage;
+        public Page Page => _cachedPage ??= _pageFactory();
         public ImageSource? Icon { get; }
 
-        public MenuItemViewModel(string title, string imageUri, Page page)
+        public MenuItemViewModel(string title, string imageUri, Func<Page> pageFactory)
         {
             Title = title;
 
@@ -30,7 +32,7 @@ namespace DesignGeneratorUI.ViewModels
             {
                 Icon = null;
             }
-            Page = page;
+             _pageFactory = pageFactory;
         }
     }
 }

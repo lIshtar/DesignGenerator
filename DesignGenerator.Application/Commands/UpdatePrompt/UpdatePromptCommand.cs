@@ -1,23 +1,16 @@
-﻿using System;
+﻿using DesignGenerator.Application.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DesignGenerator.Domain
+namespace DesignGenerator.Application.Commands.UpdatePrompt
 {
-    public class Prompt
+    public class UpdatePromptCommand : ICommand
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Text { get; set; }
-
-        public Prompt(string name, string text)
-        {
-            Name = name;
-            Text = text;
-        }
-
-        public Prompt() { }
     }
 }

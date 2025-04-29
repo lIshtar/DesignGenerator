@@ -13,11 +13,10 @@ namespace DesignGenerator.Infrastructure.DBEntities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string Request {  get; set; }
-        public string Response { get; set; }
+        public string Text { get; set; }
 
         [ForeignKey("model")]
-        public int ModelId { get; set; }
-        public DateTime DateTime { get; set; }
+        public string Sender { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }

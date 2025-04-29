@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DesignGenerator.Application.Mappers
+namespace DesignGenerator.Application.Commands.AddPrompt
 {
-    public class AddIllustrationCommandProfile : Profile
+    public class AddPromptCommandProfile : Profile
     {
-        public AddIllustrationCommandProfile()
+        public AddPromptCommandProfile()
         {
-            CreateMap<AddIllustrationCommand, Illustration>().ReverseMap();
+            CreateMap<AddPromptCommand, Prompt>().ReverseMap();
         }
     }
 }

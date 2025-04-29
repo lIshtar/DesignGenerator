@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DesignGeneratorUI.ViewModels.PagesViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,10 @@ namespace DesignGeneratorUI.Views.Pages
     /// </summary>
     public partial class ImageHistoryPage : Page
     {
-        public ImageHistoryPage()
+        public ImageHistoryPage(ImageHistoryPageViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
         }
     }
 }

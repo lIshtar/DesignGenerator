@@ -6,18 +6,15 @@ using System.Threading.Tasks;
 
 namespace DesignGenerator.Domain
 {
-    public class Prompt
+    public class Message
     {
         public int Id { get; set; }
-        public string Name { get; set; }
         public string Text { get; set; }
-
-        public Prompt(string name, string text)
+        public string Sender { get; set; }
+        public DateTime Timestamp { get; set; }
+        public override string ToString()
         {
-            Name = name;
-            Text = text;
+            return $"{Timestamp}: {Sender} - {Text}";
         }
-
-        public Prompt() { }
     }
 }

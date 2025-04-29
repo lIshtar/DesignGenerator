@@ -11,15 +11,14 @@ using DesignGenerator.Application.Commands.AddIllustration;
 using DesignGenerator.Application.Queries.Communicate;
 using DesignGenerator.Application;
 using CommunityToolkit.Mvvm.Input;
-using System.Windows.Threading;
 using DesignGenerator.Domain;
-using DocumentFormat.OpenXml.Office.CustomUI;
+using DesignGenerator.Application.Queries.GetAllPrompts;
+
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
     public class MainInteractionPageViewModel : BaseViewModel
     {
         private string _saveFolder;
-
         private string? _userInput;
         private bool _isSelectionMode;
         private string? _imageTitle;
@@ -108,7 +107,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
-        
+        public ICommand LoadedCommand { get; }
         public ICommand TextSelectedCommand { get; }
         public ICommand SendMessageCommand { get; }
         public ICommand ToggleSelectionModeCommand { get; }
@@ -122,6 +121,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private IQueryDispatcher _queryDispatcher;
         private ITemplateParser _templateParser;
 
+        // TODO: rework LoadPrompts
         public MainInteractionPageViewModel(
             ICommandDispatcher commandDispatcher,
             IQueryDispatcher queryDispatcher,
@@ -135,6 +135,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             _templateParser = templateParser;
 
             //Инициализация команд
+            LoadedCommand = new AsyncRelayCommand(Loaded);
             SendMessageCommand = new AsyncRelayCommand(SendMessage);
             ToggleSelectionModeCommand = new RelayCommand(ToggleSelectionMode);
             GenerateImageCommand = new AsyncRelayCommand(GenerateImage);
@@ -145,19 +146,21 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
             _saveFolder = GetImageFolder(configuration);
             GeneratedImagePath = GetDefaultImagePath();
-            SavedPrompts = LoadPrompts();
 
             // Тестовые сообщения
             Messages.Add(new ChatMessageViewModel { Text = "Вот пример двух объектов в формате JSON с полями `Title` и `Prompt`, которые могут использоваться для иллюстрации:\r\n\r\n```json\r\n[\r\n    {\r\n        \"Title\": \"Тайный сад\",\r\n        \"Prompt\": \"Изображение волшебного сада, полного ярких цветов и таинственных существ, с солнечными лучами, пробивающимися сквозь листву.\"\r\n    },\r\n    {\r\n        \"Title\": \"Космическое путешествие\",\r\n        \"Prompt\": \"Иллюстрация космического корабля, плывущего сквозь галактику, окруженного звездами и планетами, с яркими цветными туманностями на фоне.\"\r\n    }\r\n]\r\n```\r\n\r\nЭти объекты содержат названия иллюстраций и описания, которые могут быть использованы для их создания.", IsBotMessage = true });
         }
 
-        // TODO: implement DB with prompts
-        private ObservableCollection<Prompt> LoadPrompts()
+        private async Task Loaded()
         {
-            return new ObservableCollection<Prompt>
-            {
-                new Prompt{Text = "abracadabra", Name = "Test"}
-            };
+            SavedPrompts = await LoadPrompts();
+        }
+
+        private async Task<ObservableCollection<Prompt>> LoadPrompts()
+        {
+            var query = new GetAllPromptsQuery();
+            var response = await _queryDispatcher.Send<GetAllPromptsQuery, GetAllPromptsResponse>(query);
+            return [.. response.Prompts];
         }
         private string GetDefaultImagePath() => Directory.GetCurrentDirectory() + "\\Images\\DefaultImage.png";
 

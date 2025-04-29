@@ -16,7 +16,6 @@ using DesignGenerator.Application.Interfaces;
 using ICommand = System.Windows.Input.ICommand;
 using DesignGenerator.Domain;
 using DesignGenerator.Application.Queries.GetAllIllustrations;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Dynamic;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
@@ -98,17 +97,6 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             ExportToExcelCommand = new RelayCommand(ExportToExcel);
             BrowseCommand = new RelayCommand(Browse);
             FilterCommand = new RelayCommand(ApplyFilter);
-
-
-            //AvailableColumns = new ObservableCollection<ExportColumn>
-            //{
-            //    new ExportColumn("Номер", "Id"),
-            //    new ExportColumn("Название", "Title"),
-            //    new ExportColumn("Промпт", "Prompt"),
-            //    new ExportColumn("Путь", "IllustrationPath"),
-            //    new ExportColumn("Проверено", "IsReviewed"),
-            //    new ExportColumn("Дата", "GenerationDate"),
-            //};
 
             LoadData();
         }

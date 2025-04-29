@@ -4,9 +4,25 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DesignGeneratorUI.Views.Pages"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+      xmlns:interactivity="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+      xmlns:converters="clr-namespace:DesignGeneratorUI.Converters"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PromptManagerPage">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <converters:BoolToModeConverter x:Key="BoolToModeConverter"/>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
@@ -16,13 +32,15 @@
 
         <!-- Область редактирования -->
         <StackPanel Grid.Column="0" Margin="20">
+            <TextBlock Text="{Binding IsEditMode, Converter={StaticResource BoolToModeConverter}}" FontWeight="Bold" FontSize="14" Foreground="Gray" Margin="0,0,0,10"/>
             <TextBlock Text="Название промпта:" FontWeight="Bold"/>
-            <TextBox Text="{Binding EditingPromptName}" Margin="0,5,0,10"/>
+            <TextBox Text="{Binding SelectedPrompt.Name}" Margin="0,5,0,10"/>
 
             <TextBlock Text="Текст промпта:" FontWeight="Bold"/>
-            <TextBox Text="{Binding EditingPromptText}" Margin="0,5,0,10" AcceptsReturn="True" Height="200" TextWrapping="Wrap"/>
+            <TextBox Text="{Binding SelectedPrompt.Text}" Margin="0,5,0,10" AcceptsReturn="True" Height="200" TextWrapping="Wrap"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                <Button Content="Новый промпт" Command="{Binding NewPromptCommand}" Margin="0,0,0,10"/>
                 <Button Content="Отмена" Command="{Binding CancelEditCommand}" Margin="0,0,10,0"/>
                 <Button Content="{Binding ConfirmButtonText}" Command="{Binding ConfirmEditCommand}" Margin="0,0,10,0"/>
                 <Button Content="Удалить" Command="{Binding DeletePromptCommand}" Foreground="Red"/>
@@ -31,6 +49,25 @@
 
         <!-- Список промптов -->
         <ListBox ItemsSource="{Binding SavedPrompts}" SelectedItem="{Binding SelectedPrompt}" DisplayMemberPath="Name" Grid.Column="1" 
-         Background="#F0F0F0" BorderBrush="#CCC" BorderThickness="1"/>
+         Background="#F0F0F0" BorderBrush="#CCC" BorderThickness="1">
+            <ListBox.Style>
+                <Style TargetType="ListBox">
+                    <Style.Triggers>
+                        <Trigger Property="HasItems" Value="False">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBox">
+                                        <TextBlock Text="Нет сохранённых промптов" 
+                                           Foreground="Gray" 
+                                           VerticalAlignment="Center" 
+                                           HorizontalAlignment="Center"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.Style>
+        </ListBox>
     </Grid>
 </Page>

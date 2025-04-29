@@ -24,10 +24,9 @@ namespace DesignGenerator.Application.Queries.GetAllIllustrations
         public async Task<GetAllIllustrationQueryResponse> Handle(GetAllIllustrationQuery command)
         {
             var illustrations = await _repositoryService.GetAllAsync();
-            var unreviewedIllustrations = illustrations.ToList();
             var response = new GetAllIllustrationQueryResponse
             {
-                Illustrations = unreviewedIllustrations
+                Illustrations = illustrations.ToList()
             };
             return response;
         }

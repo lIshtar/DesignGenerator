@@ -8,13 +8,13 @@ using DesignGenerator.Application.Queries;
 using DesignGenerator.Application.Queries.Communicate;
 using DesignGenerator.Application.Queries.GetUnreviewedIllustrations;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DesignGenerator.Application.Mappers;
 using DesignGenerator.Application.Queries.GetAllIllustrations;
+using DesignGenerator.Application.Commands.AddMessage;
+using DesignGenerator.Application.Commands.AddPrompt;
+using DesignGenerator.Application.Commands.DeletePrompt;
+using DesignGenerator.Application.Commands.UpdatePrompt;
+using DesignGenerator.Application.Queries.GetAllPrompts;
 
 namespace DesignGenerator.Application
 {
@@ -25,18 +25,27 @@ namespace DesignGenerator.Application
             services.AddTransient<ICommandDispatcher, CommandDispatcher>();
             services.AddTransient<ICommandHandler<AddIllustrationCommand>, AddNewIllustrationCommandHandler>();
             services.AddTransient<ICommandHandler<UpdateIllustrationCommand>, UpdateIllustrationCommandHandler>();
+            services.AddTransient<ICommandHandler<AddMessageCommand>, AddMessageCommandHandler>();
+            services.AddTransient<ICommandHandler<AddPromptCommand>, AddPromptCommandHandler>();
+            services.AddTransient<ICommandHandler<DeletePromptCommand>, DeletePromptCommandHandler>();
+            services.AddTransient<ICommandHandler<UpdatePromptCommand>, UpdatePromptCommandHandler>();
 
             services.AddTransient<IQueryDispatcher, QueryDispatcher>();
             services.AddTransient<IQueryHandler<CommunicateQuery, CommunicateQueryResponse>, CommunicateQueryHandler>();
             services.AddTransient<IQueryHandler<GetAllIllustrationQuery, GetAllIllustrationQueryResponse>, GetAllIllustrationQueryHandler>();
             services.AddTransient<IQueryHandler<GetUnreviewedIllustrationsQuery, GetUnreviewedIllustrationsQueryResponse>, GetUnreviewedIllustrationsQueryHandler>();
             services.AddTransient<IQueryHandler<CreateIllustrationQuery, CreateIllustrationQueryResponse>, CreateIllustrationQueryHandler>();
+            services.AddTransient<IQueryHandler<GetAllPromptsQuery, GetAllPromptsResponse>, GetAllPromptsQueryHandler>();
 
             services.AddTransient<ITemplateParser, IllustrationTemplateJsonParser>();
 
             services.AddAutoMapper(typeof(AddIllustrationCommandProfile));
             services.AddAutoMapper(typeof(GetUnreviewedIllustrationsQueryResponseProfile));
             services.AddAutoMapper(typeof(UpdateIllustrationCommandProfile));
+            services.AddAutoMapper(typeof(AddMessageCommandProfile));
+            services.AddAutoMapper(typeof(AddPromptCommandProfile));
+            services.AddAutoMapper(typeof(DeletePromptCommandProfile));
+            services.AddAutoMapper(typeof(UpdatePromptCommandProfile));
 
             return services;
         }
