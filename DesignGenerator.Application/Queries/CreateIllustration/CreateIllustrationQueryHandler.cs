@@ -22,7 +22,8 @@ namespace DesignGenerator.Application.Queries.CreateIllustration
         public async Task<CreateIllustrationQueryResponse> Handle(CreateIllustrationQuery command)
         {
             string imageUrl = "";
-            var directory = new DirectoryInfo(command.FolderPath);
+            string folderPath = Path.GetDirectoryName(command.FolderPath);
+            var directory = new DirectoryInfo(folderPath);
 
             imageUrl = await _imageAICommunicator.GetImageUrlAsync(command.Prompt);
             // TODO: Не загружается изображение. Исправить

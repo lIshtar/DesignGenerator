@@ -21,29 +21,29 @@ namespace DesignGenerator.Infrastructure
 
         public ApplicationDbContext(IConfiguration config)
         {
-            connectionString = config.GetConnectionString("PostgresConnection") 
-                ?? throw new Exception("Connection string was not found. Name: PostgresConnection");
+            connectionString = config.GetConnectionString("SQLLiteConnection") 
+                ?? throw new Exception("Connection string was not found. Name: SQLLiteConnection");
 
             Database.EnsureCreated();
         }
 
         public ApplicationDbContext()
         {
-            connectionString = "Host=localhost;Port=5432;Database=bank;Username=kamish;Password=12345";
+            connectionString = "Data Source=app.db";//Host=localhost;Port=5432;Database=bank;Username=kamish;Password=12345";
 
             Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.UseSerialColumns();
+            //modelBuilder.UseSerialColumns();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-            AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
-            optionsBuilder.UseNpgsql(connectionString);
+            //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            //AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+            optionsBuilder.UseSqlite(connectionString);
         }
     }
 }

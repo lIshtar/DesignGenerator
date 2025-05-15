@@ -17,6 +17,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
     {
         private IQueryDispatcher _queryDispatcher;
         private const int PageSize = 6;
+
         public ObservableCollection<Illustration> AllImages { get; set; } = new();
         public ObservableCollection<Illustration> PagedImages { get; set; } = new();
 
@@ -28,7 +29,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             get => _currentPage;
             set
             {
-                SetProperty(ref _currentPage, value);
+                _currentPage = value;
                 UpdatePagedImages();
             }
         }
@@ -54,7 +55,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         private async Task Loaded()
         {
-            PagedImages = await LoadImages();
+            await LoadImages();
         }
 
         private void NextPage()
@@ -92,11 +93,13 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                 PageNumbers.Add(i);
         }
 
-        private async Task<ObservableCollection<Illustration>> LoadImages()
+        private async Task LoadImages()
         {
             var query = new GetAllIllustrationQuery();
             var response = await _queryDispatcher.Send<GetAllIllustrationQuery, GetAllIllustrationQueryResponse>(query);
-            return new ObservableCollection<Illustration>();
+            AllImages = new ObservableCollection<Illustration>(response.Illustrations);
+            CurrentPage = 1;
+            UpdatePagedImages();
         }
     }
 }

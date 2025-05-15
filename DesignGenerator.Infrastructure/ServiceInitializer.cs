@@ -19,8 +19,8 @@ namespace DesignGenerator.Infrastructure
     {
         public static IServiceCollection InitializeServices(this IServiceCollection services)
         {
-            services.AddTransient<IImageAICommunicator, ImageAIDefaultCommunicator>();
-            services.AddTransient<ITextAICommunicator, TLLCommunicator>();
+            services.AddTransient<IImageAICommunicator, GetImgConnector>();
+            services.AddTransient<ITextAICommunicator, GptConnector>();
             services.AddSingleton<IImageDownloader, ImageDownloader>();
 
             services.AddTransient<IRepository<Illustration>, IllustrationRepository>();

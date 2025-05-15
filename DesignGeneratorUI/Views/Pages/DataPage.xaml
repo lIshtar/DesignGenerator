@@ -19,13 +19,13 @@
 
         <!-- Фильтрация по дате -->
         <StackPanel Orientation="Horizontal" Margin="0,0,0,10" Grid.Row="0">
-            <TextBlock Text="Дата с:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <DatePicker SelectedDate="{Binding DateFrom}" Width="120" Margin="0,0,10,0"/>
+            <TextBlock Text="Дата с:" VerticalAlignment="Center"/>
+            <DatePicker SelectedDate="{Binding DateFrom}"/>
 
-            <TextBlock Text="по:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <DatePicker SelectedDate="{Binding DateTo}" Width="120"/>
+            <TextBlock Text="по:" VerticalAlignment="Center"/>
+            <DatePicker SelectedDate="{Binding DateTo}"/>
 
-            <Button Content="Применить фильтр" Command="{Binding FilterCommand}" Margin="10,0,0,0"/>
+            <Button Content="Применить фильтр" Command="{Binding FilterCommand}"/>
         </StackPanel>
 
         <!-- Выбор нужных полей -->

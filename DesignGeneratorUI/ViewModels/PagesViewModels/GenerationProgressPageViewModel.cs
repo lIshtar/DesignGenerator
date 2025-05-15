@@ -113,9 +113,6 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                         FolderPath = illustrationFolder
                     };
 
-                    // TODO: replace with real logic
-                    await Task.Delay(1000);
-
                     var createIllustrationQueryResponse = await Task.Run(() =>
                         _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createQuery));
 
@@ -126,7 +123,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
                     await Application.Current.Dispatcher.InvokeAsync(() =>
                     {
-                        ProgressText = $"Генерация... {ProgressValue / numberOfImages * 100}%";
+                        ProgressText = $"Генерация... {(int)(ProgressValue / numberOfImages * 100)}%";
                     });
 
 

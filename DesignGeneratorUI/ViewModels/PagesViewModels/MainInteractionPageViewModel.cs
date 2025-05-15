@@ -121,7 +121,6 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private IQueryDispatcher _queryDispatcher;
         private ITemplateParser _templateParser;
 
-        // TODO: rework LoadPrompts
         public MainInteractionPageViewModel(
             ICommandDispatcher commandDispatcher,
             IQueryDispatcher queryDispatcher,
@@ -148,7 +147,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             GeneratedImagePath = GetDefaultImagePath();
 
             // Тестовые сообщения
-            Messages.Add(new ChatMessageViewModel { Text = "Вот пример двух объектов в формате JSON с полями `Title` и `Prompt`, которые могут использоваться для иллюстрации:\r\n\r\n```json\r\n[\r\n    {\r\n        \"Title\": \"Тайный сад\",\r\n        \"Prompt\": \"Изображение волшебного сада, полного ярких цветов и таинственных существ, с солнечными лучами, пробивающимися сквозь листву.\"\r\n    },\r\n    {\r\n        \"Title\": \"Космическое путешествие\",\r\n        \"Prompt\": \"Иллюстрация космического корабля, плывущего сквозь галактику, окруженного звездами и планетами, с яркими цветными туманностями на фоне.\"\r\n    }\r\n]\r\n```\r\n\r\nЭти объекты содержат названия иллюстраций и описания, которые могут быть использованы для их создания.", IsBotMessage = true });
+            Messages.Add(new ChatMessageViewModel { Text = "```json\r\n[\r\n    {\r\n        \"Title\": \"Natural Wood Drop Earrings\",\r\n        \"Prompt\": \"Elegant drop earrings made from polished wooden discs with engraved floral patterns.\"\r\n    },\r\n    {\r\n        \"Title\": \"Geometric Wood Studs\",\r\n        \"Prompt\": \"Minimalist square wooden studs featuring a smooth, unfinished texture and subtle grain.\"\r\n    },\r\n    {\r\n        \"Title\": \"Boho Wood Hoop Earrings\",\r\n        \"Prompt\": \"Lightweight wooden hoops adorned with vibrant tassels, showcasing a rustic yet trendy design.\"\r\n    }\r\n]\r\n```", IsBotMessage = true });
         }
 
         private async Task Loaded()

@@ -13,7 +13,7 @@
     <Window.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <SolidColorBrush x:Key="PrimaryColor" Color="#007ACC"/>
-        <SolidColorBrush x:Key="SecondaryColor" Color="#333333"/>
+        <SolidColorBrush x:Key="SecondaryColor" Color="#B2BEB5"/>
         <SolidColorBrush x:Key="TextColor" Color="White"/>
         <SolidColorBrush x:Key="HoverColor" Color="#005999"/>
     </Window.Resources>

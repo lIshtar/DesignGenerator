@@ -34,42 +34,45 @@
 
         <!-- Современный стиль для CheckBox с круглым дизайном -->
         <Style x:Key="CustomRoundCheckBox" TargetType="CheckBox">
-            
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="#0078D7"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid Width="30" Height="30">
+                            <!-- Круглая граница -->
+                            <Ellipse x:Name="Circle"
+                             Stroke="{TemplateBinding BorderBrush}"
+                             StrokeThickness="2"
+                             Fill="Transparent"/>
 
-            <!-- Определяем шаблон для CheckBox -->
-            <Style.Setters>
-                <Setter Property="Width" Value="30"/>
-                <Setter Property="Height" Value="30"/>
-                <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="BorderBrush" Value="#0078D7"/>
-                <Setter Property="BorderThickness" Value="2"/>
-                <Setter Property="Cursor" Value="Hand"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-            
-                <Setter Property="Foreground" Value="#0078D7"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="CheckBox">
-                            <Grid Width="30" Height="30">
-                                <!-- Создаем круглый чекбокс -->
-                                <Ellipse Name="Circle" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2" Fill="Transparent"/>
+                            <!-- Галочка -->
+                            <Path x:Name="CheckMark"
+                          Data="M 6 14 L 12 20 L 22 8"
+                          StrokeThickness="2"
+                          Stroke="#28A745"
+                          Visibility="Collapsed"
+                          StrokeStartLineCap="Round"
+                          StrokeEndLineCap="Round"/>
+                        </Grid>
 
-                                <!-- Галочка, которая будет отображаться, когда чекбокс выбран -->
-                                <Path Name="CheckMark" Visibility="Collapsed" Data="M 0 0 L 10 10 L 24 0" StrokeThickness="2" Stroke="#28A745" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-                            </Grid>
-                            <ControlTemplate.Triggers>
-                                <!-- Показывать галочку, когда чекбокс выбран -->
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
-                                    <Setter TargetName="Circle" Property="Fill" Value="#28A745"/>
-                                    <Setter TargetName="Circle" Property="Stroke" Value="#28A745"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style.Setters>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="Circle" Property="Fill" Value="#28A745"/>
+                                <Setter TargetName="Circle" Property="Stroke" Value="#28A745"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Page.Resources>
 
@@ -97,7 +100,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Text="🤖 AI-бот" FontSize="22" FontWeight="Bold" Foreground="#333" Margin="10,0,0,10"/>
+                <TextBlock Text="Текстовая модель" FontSize="22" FontWeight="Bold" Foreground="#333" Margin="10,0,0,10"/>
 
                 <!-- Контейнер для сообщений -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -141,10 +144,7 @@
                         <!-- Кнопка снизу -->
                     </Grid.RowDefinitions>
 
-                    <TextBox Text="{Binding UserInput}" AcceptsReturn="True" Height="80"
-                        TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
-                        FontSize="14" Background="#FAFAFA" BorderThickness="1"
-                        Foreground="#333" Margin="0,0,10,0" Grid.Row="0">
+                    <TextBox Text="{Binding UserInput}" AcceptsReturn="True" Height="80" TextWrapping="WrapWithOverflow">
                         <TextBox.ContextMenu>
                             <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
                                 <MenuItem Header="📌 Промпты">
@@ -163,29 +163,24 @@
 
                                 <Separator />
 
-                                <MenuItem Header="➕ Добавить промпт"
-                                    Command="{Binding NavigateToPromptManagerCommand}" />
+                                <MenuItem Header="➕ Добавить промпт" Command="{Binding NavigateToPromptManagerCommand}" />
                             </ContextMenu>
                         </TextBox.ContextMenu>
                     </TextBox>
 
-                    <Button Content="💬 Отправить" Command="{Binding SendMessageCommand}" Padding="10,5"
-                        Background="#0078D7" Foreground="White" FontWeight="Bold"
-                        Width="140" Height="40" Cursor="Hand" Grid.Row="1"/>
+                    <Button Content="💬 Отправить" Command="{Binding SendMessageCommand}" Grid.Row="1"/>
                 </Grid>
             </Grid>
         </Border>
 
         <!-- Правая часть: Генерация изображений -->
         <Border Grid.Column="1" Grid.Row="0" Padding="15" Background="White" CornerRadius="10" BorderBrush="#CCC" BorderThickness="1">
-            <StackPanel Orientation="Vertical" Margin="10" HorizontalAlignment="Center">
-                <TextBlock Text="🖼 Генератор изображений" FontSize="22" FontWeight="Bold" Foreground="#333" Margin="0,0,0,10"/>
-                <TextBox Width="250" Height="30" Text="{Binding ImageTitle}" ToolTip="Название картинки"/>
-                <TextBox Width="250" Height="70" Text="{Binding ImageDescription}" AcceptsReturn="True" TextWrapping="Wrap" ToolTip="Описание картинки" Margin="0,10,0,0"/>
-                <Button Content="🎨 Создать изображение" Command="{Binding GenerateImageCommand}" 
-                        Background="#28A745" Foreground="White" FontWeight="Bold" 
-                        Width="200" Height="35" Cursor="Hand" Margin="0,10,0,0"/>
-                <Border Width="250" Height="250" Background="#E0E0E0" Margin="0,10,0,0" BorderThickness="1" BorderBrush="#CCC">
+            <StackPanel Orientation="Vertical" Margin="10" HorizontalAlignment="Stretch">
+                <TextBlock Text="🖼 Генератор изображений"/>
+                <TextBox Text="{Binding ImageTitle}" ToolTip="Название картинки" HorizontalAlignment="Stretch"/>
+                <TextBox Text="{Binding ImageDescription}" AcceptsReturn="True" ToolTip="Описание картинки" TextWrapping="WrapWithOverflow" HorizontalAlignment="Stretch"/>
+                <Button Content="🎨 Создать изображение" Command="{Binding GenerateImageCommand}" />
+                <Border Width="250" Height="250" Background="#E0E0E0" Margin="0,10,0,0" BorderThickness="1" BorderBrush="#CCC" HorizontalAlignment="Stretch">
                     <Image Source="{Binding GeneratedImagePath}" Stretch="Uniform"/>
                 </Border>
             </StackPanel>
@@ -193,13 +188,9 @@
 
         <!-- Кнопки "Выбрать сообщения" и "Создать картинки" -->
         <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,10,10">
-            <Button Content="✅ Выбрать сообщения" Command="{Binding ToggleSelectionModeCommand}"
-                    Background="#FFAA00" Foreground="White" FontWeight="Bold"
-                    Width="180" Height="35" Cursor="Hand" Margin="0,0,10,0"/>
+            <Button Content="✅ Выбрать сообщения" Command="{Binding ToggleSelectionModeCommand}"/>
 
-            <Button Content="🖼 Создать картинки" Command="{Binding GenerateMultipleImagesCommand}"
-                    Background="#17A2B8" Foreground="White" FontWeight="Bold"
-                    Width="180" Height="35" Cursor="Hand"/>
+            <Button Content="🖼 Создать выбранные изображения" Command="{Binding GenerateMultipleImagesCommand}"/>
         </StackPanel>
     </Grid>
 </Page>

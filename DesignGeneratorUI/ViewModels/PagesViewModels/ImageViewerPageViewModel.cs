@@ -23,18 +23,13 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             set { _selectedIllustration = value; OnPropertyChanged(nameof(SelectedIllustration)); }
         }
 
-        public bool IsRegenerateEnabled
-        {
-            get => _isRegenerateEnabled;
-            set { _isRegenerateEnabled = value; OnPropertyChanged(nameof(IsRegenerateEnabled)); }
-        }
-
         public ICommand NextImageCommand { get; private set; }
         public ICommand RegenerateCommand { get; private set; }
         public ICommand MarkAsReviewedCommand { get; private set; }
+        public ICommand LoadedCommand { get; private set; }
 
         private List<Illustration>? _illustrations;
-        private int _illustrationIndex;
+        private int _illustrationIndex = 0;
 
         private IQueryDispatcher _queryDispatcher;
         private ICommandDispatcher _commandDispatcher;
@@ -50,8 +45,14 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private void InitializeCommands()
         {
             NextImageCommand = new AsyncRelayCommand(NextImage);
-            RegenerateCommand = new AsyncRelayCommand(RegenerateImage, () => IsRegenerateEnabled);
+            RegenerateCommand = new AsyncRelayCommand(RegenerateImage);
             MarkAsReviewedCommand = new AsyncRelayCommand(MarkAsReviewed);
+            LoadedCommand = new AsyncRelayCommand(Loaded);
+        }
+
+        private async Task Loaded()
+        {
+            await InitializeIllustrations();
         }
 
         private async Task InitializeIllustrations()
@@ -59,6 +60,16 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             var command = new GetUnreviewedIllustrationsQuery();
             var response = await _queryDispatcher.Send<GetUnreviewedIllustrationsQuery, GetUnreviewedIllustrationsQueryResponse>(command);
             _illustrations = response.Illustrations;
+            if (_illustrations.Count > 0)
+            {
+                var current = _illustrations[_illustrationIndex];
+                SelectedIllustration = new CreatedIllustrationViewModel
+                {
+                    Title = current.Title,
+                    Prompt = current.Prompt,
+                    IllustrationPath = current.IllustrationPath,
+                };
+            }
         }
 
         private async Task NextImage()
@@ -104,7 +115,6 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                 IllustrationPath = SelectedIllustration.IllustrationPath
             };
             await _commandDispatcher.Send<AddIllustrationCommand>(addCommand);
-            IsRegenerateEnabled = false;
         }
 
         private async Task MarkAsReviewed()
@@ -126,6 +136,8 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
                 await _commandDispatcher.Send<UpdateIllustrationCommand>(updateCommand);
             }
+
+            await NextImage();
         }
     }
 }

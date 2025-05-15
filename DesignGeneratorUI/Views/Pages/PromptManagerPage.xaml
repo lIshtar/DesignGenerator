@@ -40,10 +40,10 @@
             <TextBox Text="{Binding SelectedPrompt.Text}" Margin="0,5,0,10" AcceptsReturn="True" Height="200" TextWrapping="Wrap"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                <Button Content="Новый промпт" Command="{Binding NewPromptCommand}" Margin="0,0,0,10"/>
-                <Button Content="Отмена" Command="{Binding CancelEditCommand}" Margin="0,0,10,0"/>
-                <Button Content="{Binding ConfirmButtonText}" Command="{Binding ConfirmEditCommand}" Margin="0,0,10,0"/>
-                <Button Content="Удалить" Command="{Binding DeletePromptCommand}" Foreground="Red"/>
+                <Button Content="Новый промпт" Command="{Binding NewPromptCommand}"/>
+                <Button Content="Отмена" Command="{Binding CancelEditCommand}"/>
+                <Button Content="{Binding ConfirmButtonText}" Command="{Binding ConfirmEditCommand}"/>
+                <Button Content="Удалить" Command="{Binding DeletePromptCommand}"/>
             </StackPanel>
         </StackPanel>
 

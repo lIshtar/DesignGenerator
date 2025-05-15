@@ -26,8 +26,8 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                 }
             }
         }
-        private Prompt _selectedPrompt;
-        public ObservableCollection<Prompt> SavedPrompts { get; set; }
+        private Prompt _selectedPrompt = new();
+        public ObservableCollection<Prompt> SavedPrompts { get; set; } = new();
 
         public Prompt SelectedPrompt
         {

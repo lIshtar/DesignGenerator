@@ -8,20 +8,20 @@ using System.Windows.Data;
 
 namespace DesignGeneratorUI.Converters
 {
-    public class PageHighlightConverter : IValueConverter
+    public class PageHighlightConverter : IMultiValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null || parameter == null)
+            if (values.Length < 2 || values[0] == null || values[1] == null)
                 return Brushes.Transparent;
 
-            int currentPage = (int)value;
-            int buttonPage = System.Convert.ToInt32(parameter);
+            int currentPage = System.Convert.ToInt32(values[0]);
+            int buttonPage = System.Convert.ToInt32(values[1]);
 
             return currentPage == buttonPage ? Brushes.LightBlue : Brushes.Transparent;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

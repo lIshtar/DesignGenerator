@@ -22,7 +22,7 @@
     <Page.Resources>
         <converters:PageHighlightConverter x:Key="PageHighlightConverter" />
     </Page.Resources>
-    
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -40,10 +40,10 @@
                 <DataTemplate>
                     <Border BorderBrush="#CCC" BorderThickness="1" Margin="10" Width="200">
                         <StackPanel Margin="5">
-                            <Image Source="{Binding FilePath}" Height="120" Stretch="UniformToFill"/>
+                            <Image Source="{Binding IllustrationPath}" Height="120" Stretch="UniformToFill"/>
                             <TextBlock Text="{Binding Title}" FontWeight="Bold" Margin="0,5,0,0"/>
                             <TextBlock Text="{Binding Prompt}" TextWrapping="Wrap" FontSize="12" Foreground="Gray"/>
-                            <TextBlock Text="{Binding CreatedAt}" FontSize="10" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding GenerationDate}" FontSize="10" Foreground="DarkGray"/>
                         </StackPanel>
                     </Border>
                 </DataTemplate>
@@ -65,10 +65,20 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Content="{Binding}" Margin="2"
-                        Command="{Binding DataContext.GoToPageCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                        CommandParameter="{Binding}"
-                        Background="{Binding DataContext.CurrentPage, RelativeSource={RelativeSource AncestorType=Page}, Converter={StaticResource PageHighlightConverter}, ConverterParameter={Binding}}"/>
+                        <Button 
+                            Content="{Binding}" 
+                            Margin="2"
+                            Command="{Binding DataContext.GoToPageCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                            CommandParameter="{Binding}"
+                            >
+                            <Button.Background>
+                                <MultiBinding Converter="{StaticResource PageHighlightConverter}">
+                                    <Binding Path="DataContext.CurrentPage" RelativeSource="{RelativeSource AncestorType=Page}" />
+                                    <Binding />
+                                    <!-- это сам номер страницы -->
+                                </MultiBinding>
+                            </Button.Background>
+                        </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
