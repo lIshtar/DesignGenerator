@@ -16,7 +16,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
     public class ImageHistoryPageViewModel : ObservableObject
     {
         private IQueryDispatcher _queryDispatcher;
-        private const int PageSize = 6;
+        private const int PageSize = 14;
 
         public ObservableCollection<Illustration> AllImages { get; set; } = new();
         public ObservableCollection<Illustration> PagedImages { get; set; } = new();

@@ -55,6 +55,8 @@
 
             <Button Content="🔄 Перегенерировать" Command="{Binding RegenerateCommand}"/>
 
+            <Button Content="Удалить" Command="{Binding MarkAsReviewedCommand}"/>
+
             <Button Content="✅ Отметить проверенным" Command="{Binding MarkAsReviewedCommand}"/>
         </StackPanel>
     </Grid>

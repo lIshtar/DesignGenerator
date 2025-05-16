@@ -48,12 +48,12 @@ namespace DesignGeneratorUI.ViewModels
             MenuItems = new ObservableCollection<MenuItemViewModel>
             {
                 //new MenuItemViewModel("Home", "Images/homeicon.png", pageFactory.CreatePage<HomePage>()),
-                new MenuItemViewModel("Chat", "Images/languagemodelicon.png", () => pageFactory.CreatePage<MainInteractionPage>()),
-                new MenuItemViewModel("Export", "Images/exporticon.png", () => pageFactory.CreatePage<DataPage>()),
-                new MenuItemViewModel("Review", "Images/reviewicon.png", () => pageFactory.CreatePage<ImageViewerPage>()),
-                new MenuItemViewModel("Prompts", "Images/promptsicon.png", () => pageFactory.CreatePage<PromptManagerPage>()),
-                new MenuItemViewModel("History", "Images/historyicon.png", () => pageFactory.CreatePage<ImageHistoryPage>()),
-                new MenuItemViewModel("Settings", "Images/settingsicon.png", () => pageFactory.CreatePage<ImageHistoryPage>()),
+                new MenuItemViewModel("Главная", "Images/languagemodelicon.png", () => pageFactory.CreatePage<MainInteractionPage>()),
+                new MenuItemViewModel("Экспорт", "Images/exporticon.png", () => pageFactory.CreatePage<DataPage>()),
+                new MenuItemViewModel("Ревью", "Images/reviewicon.png", () => pageFactory.CreatePage<ImageViewerPage>()),
+                new MenuItemViewModel("Промпты", "Images/promptsicon.png", () => pageFactory.CreatePage<PromptManagerPage>()),
+                new MenuItemViewModel("История", "Images/historyicon.png", () => pageFactory.CreatePage<ImageHistoryPage>()),
+                new MenuItemViewModel("Настройки", "Images/settingsicon.png", () => pageFactory.CreatePage<ImageHistoryPage>()),
             };
 
             NavigateCommand = new RelayCommand<Page>(Navigate);

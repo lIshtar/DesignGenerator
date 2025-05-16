@@ -29,7 +29,7 @@ namespace DesignGenerator.Infrastructure
 
         public ApplicationDbContext()
         {
-            connectionString = "Data Source=app.db";//Host=localhost;Port=5432;Database=bank;Username=kamish;Password=12345";
+            connectionString = "Data Source=C:\\Users\\Ishtar\\Институт\\Диплом\\DesignGeneratorUI\\DesignGenerator.Infrastructure\\app.db";//Host=localhost;Port=5432;Database=bank;Username=kamish;Password=12345";
 
             Database.EnsureCreated();
         }

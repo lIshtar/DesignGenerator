@@ -136,13 +136,13 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         {
             if (SelectedPrompt != null)
             {
-                SavedPrompts.Remove(SelectedPrompt);
                 var command = new DeletePromptCommand
                 {
                     Id = SelectedPrompt.Id,
                     Name = SelectedPrompt.Name,
                     Text = SelectedPrompt.Text,
-                }; 
+                };
+                SavedPrompts.Remove(SelectedPrompt);
                 _commandDispatcher.Send(command);
                 CancelEdit();
             }

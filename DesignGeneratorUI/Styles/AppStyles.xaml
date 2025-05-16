@@ -15,49 +15,17 @@
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
 
     <Style TargetType="DatePicker">
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Background" Value="White"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Padding" Value="6,2"/>
         <Setter Property="Margin" Value="4"/>
         <Setter Property="MinWidth" Value="140"/>
-        <Setter Property="Foreground" Value="Black"/>
-        <Setter Property="Background" Value="White"/>
         <Setter Property="BorderBrush" Value="#CCC"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="DatePicker">
-                    <Grid>
-                        <!-- Текстовое поле -->
-                        <DatePickerTextBox x:Name="PART_TextBox"
-                                       Background="{TemplateBinding Background}"
-                                       BorderBrush="{TemplateBinding BorderBrush}"
-                                       BorderThickness="{TemplateBinding BorderThickness}"
-                                       Foreground="{TemplateBinding Foreground}"
-                                       FontSize="{TemplateBinding FontSize}"
-                                       Padding="6,2,30,2"
-                                       VerticalContentAlignment="Center"
-                                       HorizontalContentAlignment="Left"/>
-
-                        <!-- Кнопка календаря -->
-                        <Button x:Name="PART_Button"
-                            Width="26"
-                            Height="26"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Margin="0,0,2,0"
-                            Focusable="False"
-                            Cursor="Hand"
-                            Background="Transparent"
-                            BorderThickness="0">
-                            <Path Data="M3,1 L21,1 L21,21 L3,21 Z M6,6 H9 V9 H6 Z M10,6 H13 V9 H10 Z M14,6 H17 V9 H14 Z M6,10 H9 V13 H6 Z M10,10 H13 V13 H10 Z M14,10 H17 V13 H14 Z M6,14 H9 V17 H6 Z M10,14 H13 V17 H10 Z M14,14 H17 V17 H14 Z"
-                              Stretch="Uniform"
-                              Fill="#555"/>
-                        </Button>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        
     </Style>
+
 
     <Style x:Key="ModernDataGridStyle" TargetType="DataGrid">
         <Setter Property="Background" Value="#FAFAFA"/>
