@@ -31,6 +31,44 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
+        private string _visualapiKey;
+        public string VisualApiKey
+        {
+            get
+            {
+                if (_visualapiKey == null)
+                {
+                    _visualapiKey = _config.GetValue("ApiKeys:Visual") ?? string.Empty;
+                }
+                return _visualapiKey;
+            }
+            set
+            {
+                _visualapiKey = value;
+                _config.SetValue("ApiKeys:Visual", value);
+                OnPropertyChanged(nameof(VisualApiKey));
+            }
+        }
+
+        private string _textapiKey;
+        public string TextApiKey
+        {
+            get
+            {
+                if (_textapiKey == null)
+                {
+                    _textapiKey = _config.GetValue("ApiKeys:Text") ?? string.Empty;
+                }
+                return _textapiKey;
+            }
+            set
+            {
+                _textapiKey = value;
+                _config.SetValue("ApiKeys:Text", value);
+                OnPropertyChanged(nameof(TextApiKey));
+            }
+        }
+
         public ObservableCollection<string> AvailableModels { get; } = new ObservableCollection<string>
 {
     "flux-schnell",

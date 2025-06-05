@@ -11,8 +11,16 @@
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="20"/>
+            <!-- Сохранение изображений -->
+            <RowDefinition Height="10"/>
             <RowDefinition Height="Auto"/>
+            <!-- Выбор модели -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+            <!-- API-ключ визуальной -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+            <!-- API-ключ текстовой -->
         </Grid.RowDefinitions>
 
         <!-- Путь сохранения изображений -->
@@ -21,15 +29,12 @@
                        VerticalAlignment="Center"
                        FontWeight="SemiBold" Margin="0,0,10,0"/>
             <TextBox Width="400"
-                     Text="{Binding ImageSavePath}" />
+                     Text="{Binding ImageSavePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Content="..."
                     Width="30"
                     Margin="10,0,0,0"
                     Command="{Binding BrowsePathCommand}"/>
         </StackPanel>
-
-        <!-- Отступ -->
-        <Border Grid.Row="1"/>
 
         <!-- Выбор модели нейросети -->
         <StackPanel Grid.Row="2" Orientation="Horizontal">
@@ -39,6 +44,24 @@
             <ComboBox Width="300"
                       ItemsSource="{Binding AvailableModels}"
                       SelectedItem="{Binding SelectedModel}" />
+        </StackPanel>
+
+        <!-- API-ключ визуальной модели -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal">
+            <TextBlock Text="API-ключ визуальной нейросети:"
+                       VerticalAlignment="Center"
+                       FontWeight="SemiBold" Margin="0,0,10,0"/>
+            <TextBox Width="400"
+                     Text="{Binding VisualApiKey}" />
+        </StackPanel>
+
+        <!-- API-ключ текстовой модели -->
+        <StackPanel Grid.Row="6" Orientation="Horizontal">
+            <TextBlock Text="API-ключ текстовой нейросети:"
+                       VerticalAlignment="Center"
+                       FontWeight="SemiBold" Margin="0,0,10,0"/>
+            <TextBox Width="400"
+                     Text="{Binding TextApiKey}" />
         </StackPanel>
     </Grid>
 </Page>

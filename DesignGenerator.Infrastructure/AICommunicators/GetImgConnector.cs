@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft;
 using Newtonsoft.Json;
 
@@ -12,14 +13,21 @@ namespace DesignGenerator.Infrastructure.AICommunicators
 {
     public class GetImgConnector : IImageAICommunicator
     {
+        public GetImgConnector(IConfiguration configuration)
+        {
+            _config = configuration;
+        }
+
         private readonly string _authorizationKey = "key-MVag0BDI6z8f2lCufUYFkvsZmdmk8uBYHeeLq9pdsQlXDgFsxIF5M22KlVwDDmZMMtqbRXF1qQVlFZ7ASBCKqv8lvWJQgrp";
         private readonly HttpClient _httpClient = new HttpClient();
+        private readonly IConfiguration _config;
         public async Task<string> GetImageUrlAsync(string query)
         {
             if (string.IsNullOrWhiteSpace(query))
                 return null;
 
-            var url = "https://api.getimg.ai/v1/flux-schnell/text-to-image";
+            var model = _config["Models:DefaultImageModel"];
+            var url = $"https://api.getimg.ai/v1/{model}/text-to-image";
 
             var payload = new
             {

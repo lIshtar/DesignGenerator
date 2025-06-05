@@ -60,7 +60,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             var command = new GetUnreviewedIllustrationsQuery();
             var response = await _queryDispatcher.Send<GetUnreviewedIllustrationsQuery, GetUnreviewedIllustrationsQueryResponse>(command);
             _illustrations = response.Illustrations;
-            if (_illustrations.Count > 0)
+            if (_illustrations.Count > 0 && _illustrationIndex < _illustrations.Count)
             {
                 var current = _illustrations[_illustrationIndex];
                 SelectedIllustration = new CreatedIllustrationViewModel
@@ -68,6 +68,15 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                     Title = current.Title,
                     Prompt = current.Prompt,
                     IllustrationPath = current.IllustrationPath,
+                };
+            }
+            else
+            {
+                SelectedIllustration = new CreatedIllustrationViewModel
+                {
+                    Title = "Больше нечего проверять",
+                    Prompt = "",
+                    IllustrationPath = "C:\\Users\\Ishtar\\Институт\\Диплом\\DesignGeneratorUI\\DesignGeneratorUI\\Images\\DefaultImage.png",
                 };
             }
         }
@@ -100,6 +109,9 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         private async Task RegenerateImage()
         {
+            if (SelectedIllustration.Title == "Больше нечего проверять")
+                return;
+
             var createCommand = new CreateIllustrationQuery
             {
                 Prompt = SelectedIllustration.Prompt,

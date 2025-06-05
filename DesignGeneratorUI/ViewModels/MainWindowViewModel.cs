@@ -53,7 +53,7 @@ namespace DesignGeneratorUI.ViewModels
                 new MenuItemViewModel("Ревью", "Images/reviewicon.png", () => pageFactory.CreatePage<ImageViewerPage>()),
                 new MenuItemViewModel("Промпты", "Images/promptsicon.png", () => pageFactory.CreatePage<PromptManagerPage>()),
                 new MenuItemViewModel("История", "Images/historyicon.png", () => pageFactory.CreatePage<ImageHistoryPage>()),
-                new MenuItemViewModel("Настройки", "Images/settingsicon.png", () => pageFactory.CreatePage<ImageHistoryPage>()),
+                new MenuItemViewModel("Настройки", "Images/settingsicon.png", () => pageFactory.CreatePage<SettingsPage>()),
             };
 
             NavigateCommand = new RelayCommand<Page>(Navigate);

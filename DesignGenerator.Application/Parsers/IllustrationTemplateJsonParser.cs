@@ -1,4 +1,5 @@
 ﻿using DesignGenerator.Application.Interfaces;
+using DesignGenerator.Domain;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -43,8 +44,61 @@ namespace DesignGenerator.Application.Parsers
                     }
                 }
             }
+            if (illustrations.Count > 0)
+                return illustrations;
+
+            // Основной паттерн поиска блоков title ... prompt ...
+            string pattern = @"(?i)\btitle\b\s*[:\-]*\s*(.*?)\s*(?=\bprompt\b)(?i)(?:prompt)\s*[:\-]*\s*(.*?)(?=(?i:\btitle\b)|\z)";
+
+            var matches = Regex.Matches(input, pattern, RegexOptions.Singleline);
+
+            foreach (Match match in matches)
+            {
+                if (match.Groups.Count >= 3)
+                {
+                    string rawTitle = match.Groups[1].Value.Trim();
+                    string rawPrompt = match.Groups[2].Value.Trim();
+
+                    string cleanTitle = TrimPunctuation(rawTitle);
+                    string cleanPrompt = TrimPunctuation(rawPrompt);
+
+                    illustrations.Add(new IllustrationTemplate
+                    {
+                        Title = cleanTitle,
+                        Prompt = cleanPrompt
+                    });
+                }
+            }
+
+            if (illustrations.Count > 0)
+                return illustrations;
+
+
+
             return illustrations;
         }
+
+        private static string TrimEdgePunctuation(string input)
+        {
+            return Regex.Replace(input, @"^\W+|\W+$", "").Trim();
+            // Удаляем пунктуацию только по краям строки
+            //int start = 0, end = input.Length - 1;
+
+            //while (start <= end && char.IsPunctuation(input[start])) start++;
+            //while (end >= start && char.IsPunctuation(input[end])) end--;
+
+            //return input.Substring(start, end - start + 1).Trim();
+        }
+
+        private static string TrimPunctuation(string input)
+        {
+            return TrimEdgePunctuation(input.Trim().Trim(PunctuationChars));
+        }
+
+        private static readonly char[] PunctuationChars = new char[]
+        {
+        '#', '*', '"', '\'', ':', '-', '_', '—', '–', ' '
+        };
 
         public IllustrationTemplate ParseOne(string input)
         {
@@ -74,6 +128,29 @@ namespace DesignGenerator.Application.Parsers
                     }
                 }
             }
+            // Основной паттерн поиска блоков title ... prompt ...
+            string pattern = @"(?i)\btitle\b\s*[:\-]*\s*(.*?)\s*(?=\bprompt\b)(?i)(?:prompt)\s*[:\-]*\s*(.*?)(?=(?i:\btitle\b)|\z)";
+
+            var matches = Regex.Matches(input, pattern, RegexOptions.Singleline);
+
+            foreach (Match match in matches)
+            {
+                if (match.Groups.Count >= 3)
+                {
+                    string rawTitle = match.Groups[1].Value.Trim();
+                    string rawPrompt = match.Groups[2].Value.Trim();
+
+                    string cleanTitle = TrimPunctuation(rawTitle);
+                    string cleanPrompt = TrimPunctuation(rawPrompt);
+
+                    return new IllustrationTemplate
+                    {
+                        Title = cleanTitle,
+                        Prompt = cleanPrompt
+                    };
+                }
+            }
+
             return null;
         }
     }
