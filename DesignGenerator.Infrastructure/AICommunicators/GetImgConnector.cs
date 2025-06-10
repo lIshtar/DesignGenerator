@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft;
 using Newtonsoft.Json;
+using Yandex.Cloud.Iam.V1;
 
 namespace DesignGenerator.Infrastructure.AICommunicators
 {
@@ -18,14 +19,13 @@ namespace DesignGenerator.Infrastructure.AICommunicators
             _config = configuration;
         }
 
-        private readonly string _authorizationKey = "key-MVag0BDI6z8f2lCufUYFkvsZmdmk8uBYHeeLq9pdsQlXDgFsxIF5M22KlVwDDmZMMtqbRXF1qQVlFZ7ASBCKqv8lvWJQgrp";
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IConfiguration _config;
         public async Task<string> GetImageUrlAsync(string query)
         {
             if (string.IsNullOrWhiteSpace(query))
                 return null;
-
+            var _authorizationKey = _config["[ApiKeys:Visual"];
             var model = _config["Models:DefaultImageModel"];
             var url = $"https://api.getimg.ai/v1/{model}/text-to-image";
 

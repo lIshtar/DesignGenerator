@@ -1,18 +1,27 @@
-﻿using OpenAI;
+﻿using Microsoft.Extensions.Configuration;
+using OpenAI;
 using OpenAI.Chat;
 using System.ClientModel;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using Yandex.Cloud.Loadtesting.Api.V1.Config;
 
 namespace DesignGenerator.Infrastructure.AICommunicators
 {
     public class GptConnector : ITextAICommunicator
     {
+        public GptConnector(IConfiguration configuration)
+        {
+            _config = configuration;
+        }
+
+        private readonly IConfiguration _config;
         private readonly string _baseUrl = "https://models.inference.ai.azure.com";
-        private string _key = "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";
+
         public async Task<string> GetTextAnswerAsync(string query)
         {
+            var _key = _config["[ApiKeys:Text"];
             var options = new OpenAIClientOptions()
             {
                 Endpoint = new Uri(_baseUrl)
