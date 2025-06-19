@@ -5,7 +5,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles/AppStyles.xaml" />
+                <ResourceDictionary Source="Resourсes/Styles/AppStyles.xaml" />
+                <ResourceDictionary Source="Resourсes\DataTemplates\ParameterTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

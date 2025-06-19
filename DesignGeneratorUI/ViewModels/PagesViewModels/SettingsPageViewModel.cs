@@ -1,4 +1,6 @@
 ﻿using DesignGenerator.Application;
+using DesignGenerator.Application.Exceptions;
+using DesignGenerator.Application.Settings;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -12,87 +14,62 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
     public class SettingsPageViewModel : BaseViewModel
     {
-        private string _imageSavePath;
-        public string ImageSavePath
+        private SettingsService _settingsService;
+
+        public string ImageSaveDirectory
         {
-            get
-            {
-                if (_imageSavePath == null)
-                {
-                    _imageSavePath = _config.GetValue("Folders:DefaultImageFolder") ?? String.Empty;
-                }
-                return _imageSavePath;
-            }
+            get => _settingsService.ImageSaveDirectory;
             set
             {
-                _config.SetValue("Folders:DefaultImageFolder", value);
-                _imageSavePath = value;
-                OnPropertyChanged(nameof(ImageSavePath));
+                _settingsService.ImageSaveDirectory = value;
+                OnPropertyChanged(nameof(ImageSaveDirectory));
             }
         }
 
-        private string _visualapiKey;
-        public string VisualApiKey
-        {
-            get
-            {
-                if (_visualapiKey == null)
-                {
-                    _visualapiKey = _config.GetValue("ApiKeys:Visual") ?? string.Empty;
-                }
-                return _visualapiKey;
-            }
-            set
-            {
-                _visualapiKey = value;
-                _config.SetValue("ApiKeys:Visual", value);
-                OnPropertyChanged(nameof(VisualApiKey));
-            }
-        }
-
-        private string _textapiKey;
         public string TextApiKey
         {
-            get
-            {
-                if (_textapiKey == null)
-                {
-                    _textapiKey = _config.GetValue("ApiKeys:Text") ?? string.Empty;
-                }
-                return _textapiKey;
-            }
+            get => _settingsService.TextApiKey;
             set
             {
-                _textapiKey = value;
-                _config.SetValue("ApiKeys:Text", value);
+                _settingsService.TextApiKey = value;
                 OnPropertyChanged(nameof(TextApiKey));
             }
         }
 
-        public ObservableCollection<string> AvailableModels { get; } = new ObservableCollection<string>
-{
-    "flux-schnell",
-    "essential-v2",
-    "stable-diffusion-xl",
-    "stable-diffusion"
-};
+        public string VisualApiKey
+        {
+            get => _settingsService.VisualApiKey;
+            set
+            {
+                _settingsService.VisualApiKey = value;
+                OnPropertyChanged(nameof(VisualApiKey));
+            }
+        }
+
+        public ObservableCollection<string> AvailableModels
+        {
+            get => [.. _settingsService.Models.Select(model => model.Name)];
+        }
 
         public string SelectedModel
         {
-            get => _config.GetValue("Models:DefaultImageModel") ?? throw new Exception("Models:DefaultImageModel was not found in appconfig");
+            get => _settingsService.SelectedModel.Name;
             set
             {
-                _config.SetValue("Models:DefaultImageModel", value);
+                if (string.Equals(value, SelectedModel, StringComparison.OrdinalIgnoreCase))
+                    return;
+
+                SetSelectedModelByName(value);
                 OnPropertyChanged(nameof(SelectedModel));
             }
         }
 
-        private AppConfiguration _config;
         public ICommand BrowsePathCommand { get; private set; }
 
-        public SettingsPageViewModel(AppConfiguration configuration)
+        public SettingsPageViewModel(SettingsService settingsService)
         {
-            _config = configuration;
+            _settingsService = settingsService;
+
             BrowsePathCommand = new RelayCommand(BrowsePath);
         }
 
@@ -103,6 +80,17 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             {
                 ImageSavePath = dialog.SelectedPath;
             }
+        }
+
+        private void SetSelectedModelByName(string name)
+        {
+            var model = _settingsService.Models
+                .FirstOrDefault(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+
+            if (model == null)
+                throw new ModelNotFoundException(name);
+
+            _settingsService.SelectedModel = model;
         }
     }
 }

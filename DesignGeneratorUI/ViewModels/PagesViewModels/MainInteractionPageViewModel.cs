@@ -14,6 +14,7 @@ using CommunityToolkit.Mvvm.Input;
 using DesignGenerator.Domain;
 using DesignGenerator.Application.Queries.GetAllPrompts;
 using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
@@ -28,7 +29,9 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private bool _canGenerateImages;
         private string? _generatedImagePath;
         private string? _selectedText;
+        private ImageGenerationViewModel _imageGenerationVM;
 
+        public ObservableCollection<ParameterViewModel> Parameters { get => _imageGenerationVM.Parameters; } 
         public ObservableCollection<ChatMessageViewModel> Messages { get; set; } = new();
         public ObservableCollection<Prompt> SavedPrompts { get; set; } = new();
 
@@ -108,32 +111,63 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
-        public ICommand LoadedCommand { get; }
-        public ICommand TextSelectedCommand { get; }
-        public ICommand SendMessageCommand { get; }
-        public ICommand ToggleSelectionModeCommand { get; }
-        public ICommand GenerateImageCommand { get; }
-        public ICommand GenerateMultipleImagesCommand { get; }
-        public ICommand InsertPromptCommand { get; }
-        public ICommand NavigateToPromptManagerCommand { get; }
+        public ICommand LoadedCommand { get; private set; }
+        public ICommand TextSelectedCommand { get; private set;  }
+        public ICommand SendMessageCommand { get; private set; }
+        public ICommand ToggleSelectionModeCommand { get; private set; }
+        public ICommand GenerateImageCommand { get; private set; }
+        public ICommand GenerateMultipleImagesCommand { get; private set; }
+        public ICommand InsertPromptCommand { get; private set; }
+        public ICommand NavigateToPromptManagerCommand { get; private set; }
 
         private INavigationService _navigationService;
         private ICommandDispatcher _commandDispatcher;
         private IQueryDispatcher _queryDispatcher;
         private ITemplateParser _templateParser;
+        private IMessenger _messenger;
 
         public MainInteractionPageViewModel(
             ICommandDispatcher commandDispatcher,
             IQueryDispatcher queryDispatcher,
             IConfiguration configuration,
             INavigationService navigationService,
-            ITemplateParser templateParser)
+            ITemplateParser templateParser,
+            IMessenger messenger)
         {
             _navigationService = navigationService;
             _commandDispatcher = commandDispatcher;
             _queryDispatcher = queryDispatcher;
             _templateParser = templateParser;
+            _messenger = messenger;
 
+            Initialize(configuration);
+        }
+
+        private async Task Loaded()
+        {
+            SavedPrompts = await LoadPrompts();
+        }
+
+        private void Initialize(IConfiguration configuration)
+        {
+            InitializeProperties(configuration);
+            InitializeCommands();
+            InitializeVievModels();
+        }
+
+        private void InitializeVievModels()
+        {
+            _imageGenerationVM = new ImageGenerationViewModel(_messenger);
+        }
+
+        private void InitializeProperties(IConfiguration configuration)
+        {
+            _saveFolder = GetImageFolder(configuration);
+            GeneratedImagePath = GetDefaultImagePath();
+        }
+
+        private void InitializeCommands()
+        {
             //Инициализация команд
             LoadedCommand = new AsyncRelayCommand(Loaded);
             SendMessageCommand = new AsyncRelayCommand(SendMessage);
@@ -143,19 +177,6 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             TextSelectedCommand = new RelayCommand<string>(OnTextSelected);
             InsertPromptCommand = new RelayCommand<Prompt>(InsertPrompt);
             NavigateToPromptManagerCommand = new RelayCommand(NavigateToPromptManager);
-
-            _saveFolder = GetImageFolder(configuration);
-            GeneratedImagePath = GetDefaultImagePath();
-
-            // Тестовые сообщения
-            //Messages.Add(new ChatMessageViewModel { IsBotMessage = true, IsSelected = true, Text = "Sure! Here are five title and prompt objects for earring design inspirations:\r\n\r\n1. **Title:** Celestial Charm  \r\n   **Prompt:** Design a pair of earrings inspired by celestial bodies. Incorporate elements like stars, moons, and planets using materials such as silver, gold, and gemstones. Consider a mix of dangling elements and stud styles to capture the beauty of the night sky.\r\n\r\n2. **Title:** Oceanic Elegance  \r\n   **Prompt:** Create earrings that reflect the beauty of the ocean. Use materials like coral, shells, and aquatic-themed motifs. Incorporate shades of blue, green, and pearlescent finishes to invoke a sense of the sea, and think about designs that mimic waves or marine life.\r\n\r\n3. **Title:** Nature's Whimsy  \r\n   **Prompt:** Design earrings inspired by the elements of nature, focusing on flora and fauna. Incorporate shapes like leaves, flowers, or animal silhouettes while using sustainable materials. Explore various styles, from minimalistic to intricate details, to celebrate the beauty of the natural world.\r\n\r\n4. **Title:** Geometric Fusion  \r\n   **Prompt:** Create contemporary earrings that embrace geometric shapes and patterns. Experiment with a mix of materials like acrylic, metal, and resin to create eye-catching contrasts. Focus on symmetry and asymmetry to bring a modern twist to classic earring designs.\r\n\r\n5. **Title:** Cultural Heritage  \r\n   **Prompt:** Design earrings that celebrate a specific cultural tradition or heritage. Research traditional motifs, patterns, and colors that are significant to the culture you've chosen. Incorporate authentic materials or techniques that highlight the beauty and significance of that cultural background." });
-            //Messages.Add(new ChatMessageViewModel { Text = "Sure! Here are two illustration prompts for you:\r\n\r\n### Title: \"Whimsical Ocean Adventure\"\r\n**Prompt:** Illustrate a vibrant underwater scene where a friendly octopus, wearing a tiny pirate hat, is guiding a group of colorful fish as they explore a sunken treasure chest surrounded by coral reefs. The background should feature rays of sunlight filtering through the water, illuminating the treasure and casting playful shadows, while curious sea turtles and playful dolphins peek from the distance.\r\n\r\n---\r\n\r\n### Title: \"Enchanted Forest Gathering\"\r\n**Prompt:** Create a magical forest clearing where various woodland creatures, such as rabbits, foxes, and deer, have gathered for a mystical moonlit celebration. The scene should be filled with glowing mushrooms and fireflies, with a large, ancient tree at the center adorned with twinkling fairy lights. In the foreground, a wise owl perches on a branch, observing the joyful festivities below, as the atmosphere radiates warmth and enchantment.", IsBotMessage = true });
-            //Messages.Add(new ChatMessageViewModel { Text = "```json\r\n[\r\n    {\r\n        \"Title\": \"Natural Wood Drop Earrings\",\r\n        \"Prompt\": \"Elegant drop earrings made from polished wooden discs with engraved floral patterns.\"\r\n    },\r\n    {\r\n        \"Title\": \"Geometric Wood Studs\",\r\n        \"Prompt\": \"Minimalist square wooden studs featuring a smooth, unfinished texture and subtle grain.\"\r\n    },\r\n    {\r\n        \"Title\": \"Boho Wood Hoop Earrings\",\r\n        \"Prompt\": \"Lightweight wooden hoops adorned with vibrant tassels, showcasing a rustic yet trendy design.\"\r\n    }\r\n]\r\n```", IsBotMessage = true });
-        }
-
-        private async Task Loaded()
-        {
-            SavedPrompts = await LoadPrompts();
         }
 
         private async Task<ObservableCollection<Prompt>> LoadPrompts()
