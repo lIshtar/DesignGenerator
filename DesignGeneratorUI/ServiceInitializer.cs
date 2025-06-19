@@ -1,13 +1,14 @@
-﻿using DesignGenerator.Application.Interfaces;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using DesignGenerator.Application.Interfaces;
 using DesignGenerator.Infrastructure.AICommunicators;
 using DesignGenerator.Infrastructure.Database;
 using DesignGeneratorUI.Fabrics;
 using DesignGeneratorUI.FileServices;
+using DesignGeneratorUI.ViewModels;
 using DesignGeneratorUI.ViewModels.Navigation;
 using DesignGeneratorUI.ViewModels.PagesViewModels;
-using DesignGeneratorUI.ViewModels;
-using DesignGeneratorUI.Views.Pages;
 using DesignGeneratorUI.Views;
+using DesignGeneratorUI.Views.Pages;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -50,12 +51,13 @@ namespace DesignGeneratorUI
             // Добавляем все фабрики
             services.AddTransient<IPageFactory, PageFactory>();
 
-            services.AddTransient<AppConfiguration>();
-
             // Добавляем все сервисы
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddTransient<IFileService, NpoiExcelFileService>();
             services.AddTransient<IOpenDialogService, FolderDialogService>();
+
+            // Добавляем мессенджер
+            services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
 
             return services;
         }

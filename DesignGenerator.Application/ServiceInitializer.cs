@@ -47,6 +47,8 @@ namespace DesignGenerator.Application
             services.AddSingleton<ModelSelectionService>();
             services.AddSingleton<SettingsService>();
 
+            services.AddTransient<AppConfiguration>();
+
             services.AddAutoMapper(typeof(AddIllustrationCommandProfile));
             services.AddAutoMapper(typeof(GetUnreviewedIllustrationsQueryResponseProfile));
             services.AddAutoMapper(typeof(UpdateIllustrationCommandProfile));

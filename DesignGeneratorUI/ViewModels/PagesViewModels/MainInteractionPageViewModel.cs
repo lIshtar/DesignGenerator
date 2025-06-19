@@ -29,9 +29,9 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private bool _canGenerateImages;
         private string? _generatedImagePath;
         private string? _selectedText;
-        private ImageGenerationViewModel _imageGenerationVM;
+        private ParametersSetViewModel _visualParametersVM;
 
-        public ObservableCollection<ParameterViewModel> Parameters { get => _imageGenerationVM.Parameters; } 
+        public ObservableCollection<ParameterViewModel> Parameters { get => _visualParametersVM.Parameters; } 
         public ObservableCollection<ChatMessageViewModel> Messages { get; set; } = new();
         public ObservableCollection<Prompt> SavedPrompts { get; set; } = new();
 
@@ -157,7 +157,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         private void InitializeVievModels()
         {
-            _imageGenerationVM = new ImageGenerationViewModel(_messenger);
+            _visualParametersVM = new ParametersSetViewModel(_messenger);
         }
 
         private void InitializeProperties(IConfiguration configuration)

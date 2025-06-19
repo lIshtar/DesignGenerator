@@ -78,7 +78,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             var dialog = new FolderBrowserDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                ImageSavePath = dialog.SelectedPath;
+                ImageSaveDirectory = dialog.SelectedPath;
             }
         }
 

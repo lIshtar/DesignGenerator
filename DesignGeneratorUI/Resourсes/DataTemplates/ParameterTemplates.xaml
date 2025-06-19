@@ -1,0 +1,45 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Текстовый параметр -->
+    <DataTemplate x:Key="TextParamTemplate">
+        <StackPanel Margin="4">
+            <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding Tooltip}" />
+            <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Выпадающий список -->
+    <DataTemplate x:Key="DropdownParamTemplate">
+        <StackPanel Margin="4">
+            <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding Tooltip}" />
+            <ComboBox ItemsSource="{Binding Options}"
+                  SelectedItem="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Числовой параметр -->
+    <DataTemplate x:Key="NumberParamTemplate">
+        <StackPanel Margin="4">
+            <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding Tooltip}" />
+            <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Булев параметр -->
+    <DataTemplate x:Key="BoolParamTemplate">
+        <StackPanel Orientation="Horizontal" Margin="4">
+            <CheckBox IsChecked="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding Tooltip}" Margin="4,0,0,0" />
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- Числовой параметр с диапазоном (дополнительно, опционально) -->
+    <DataTemplate x:Key="SliderParamTemplate">
+        <StackPanel Margin="4">
+            <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding Tooltip}" />
+            <Slider Minimum="{Binding Min}" Maximum="{Binding Max}"
+                Value="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Text="{Binding Value}" HorizontalAlignment="Right" FontSize="10" />
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

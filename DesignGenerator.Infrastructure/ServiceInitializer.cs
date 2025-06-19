@@ -1,5 +1,7 @@
 ﻿using DesignGenerator.Application.Interfaces;
+using DesignGenerator.Domain.Interfaces.ImageGeneration;
 using DesignGenerator.Infrastructure.AICommunicators;
+using DesignGenerator.Infrastructure.AICommunicators.StableDiffusion;
 using DesignGenerator.Infrastructure.Database;
 using DesignGenerator.Infrastructure.Database.DBEntities;
 using DesignGenerator.Infrastructure.DBEntities;
@@ -37,6 +39,13 @@ namespace DesignGenerator.Infrastructure
             services.AddAutoMapper(typeof(IllustrationProfile));
             services.AddAutoMapper(typeof(PromptProfile));
             services.AddAutoMapper(typeof(MessageProfile));
+
+            var visualAIList = new List<IImageGenerationClient>
+            {
+                new StableDiffusionClient(),
+            };
+
+            services.AddTransient<IEnumerable<IImageGenerationClient>>(provider => visualAIList);
 
             return services;
         }

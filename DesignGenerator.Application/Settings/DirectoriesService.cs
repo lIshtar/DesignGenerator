@@ -3,6 +3,9 @@ using DesignGenerator.Application.Messages;
 
 namespace DesignGenerator.Application.Settings
 {
+    /// <summary>
+    /// Manages the configuration of directory paths, such as where generated images are saved.
+    /// </summary>
     public class DirectoriesService
     {
         private const string defaultImageSaveDirectoryConfig = "Folders:DefaultImageFolder";
@@ -12,6 +15,10 @@ namespace DesignGenerator.Application.Settings
 
         private string _imageSaveDirectory;
 
+        /// <summary>
+        /// Directory where generated images should be saved.
+        /// Updates configuration and sends change notifications.
+        /// </summary>
         internal string ImageSaveDirectory
         {
             get => _imageSaveDirectory;
@@ -23,17 +30,24 @@ namespace DesignGenerator.Application.Settings
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DirectoriesService"/> class
+        /// and loads the initial configuration.
+        /// </summary>
         public DirectoriesService(AppConfiguration configuration, IMessenger messenger)
         {
             _config = configuration;
             _messenger = messenger;
-
             InitializeDirectories();
         }
 
+        /// <summary>
+        /// Loads directory paths from configuration.
+        /// </summary>
         private void InitializeDirectories()
         {
-            string imageSaveDirecxtory = _config.GetRequiredValue(defaultImageSaveDirectoryConfig);
+            _imageSaveDirectory = _config.GetRequiredValue(defaultImageSaveDirectoryConfig);
         }
     }
+
 }

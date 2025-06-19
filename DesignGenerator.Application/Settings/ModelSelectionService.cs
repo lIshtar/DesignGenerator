@@ -6,6 +6,9 @@ using DesignGenerator.Domain.Interfaces.ImageGeneration;
 
 namespace DesignGenerator.Application.Settings
 {
+    /// <summary>
+    /// Manages the current image generation model selection and provides a list of all available models.
+    /// </summary>
     public class ModelSelectionService
     {
         private const string defaultImageModelConfig = "Models:DefaultImageModel";
@@ -15,25 +18,34 @@ namespace DesignGenerator.Application.Settings
 
         private IImageGenerationClient _selectedModel;
         private IEnumerable<IImageGenerationClient> _models;
+
+        /// <summary>
+        /// The currently selected image generation model.
+        /// Sends a message when changed and persists the selection.
+        /// </summary>
         internal IImageGenerationClient SelectedModel
         {
             get => _selectedModel;
-            set 
-            { 
+            set
+            {
                 _selectedModel = value;
                 _messenger.Send(new ModelSelectionChangedMessage(value));
                 _config.SetValue(defaultImageModelConfig, value.Name);
             }
         }
 
-        internal IEnumerable<IImageGenerationClient> Models
-        {
-            get => _models;
-        }
+        /// <summary>
+        /// All available image generation models.
+        /// </summary>
+        internal IEnumerable<IImageGenerationClient> Models => _models;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ModelSelectionService"/> class,
+        /// loading the default model from configuration.
+        /// </summary>
         public ModelSelectionService(
-            AppConfiguration configuration, 
-            List<IImageGenerationClient> models, 
+            AppConfiguration configuration,
+            IEnumerable<IImageGenerationClient> models,
             IMessenger messenger)
         {
             _config = configuration;
@@ -43,11 +55,15 @@ namespace DesignGenerator.Application.Settings
             InitializeSelectedModel();
         }
 
+        /// <summary>
+        /// Loads the selected model from configuration, or throws if not found.
+        /// </summary>
         private void InitializeSelectedModel()
         {
             string selectedModelName = _config.GetRequiredValue(defaultImageModelConfig);
 
-            _selectedModel = _models.FirstOrDefault(m => m.Name.Equals(selectedModelName, StringComparison.OrdinalIgnoreCase))
+            SelectedModel = _models.FirstOrDefault(m =>
+                m.Name.Equals(selectedModelName, StringComparison.OrdinalIgnoreCase))
                 ?? throw new ModelNotFoundException(selectedModelName);
         }
     }
