@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using DesignGenerator.Application.Exceptions;
+using DesignGenerator.Exceptions.Application;
 using DesignGenerator.Application.Messages;
 using DesignGenerator.Domain.Interfaces.ImageGeneration;
 

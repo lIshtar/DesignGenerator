@@ -1,23 +1,27 @@
-﻿using DesignGeneratorUI.ViewModels.ElementsViewModel;
-using System.Collections.ObjectModel;
-using ICommand = System.Windows.Input.ICommand;
-using Microsoft.Extensions.Configuration;
-using System.IO;
+﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using DesignGenerator.Application;
+using DesignGenerator.Application.Commands.AddIllustration;
+using DesignGenerator.Application.Interfaces;
+using DesignGenerator.Application.Queries.Communicate;
+using DesignGenerator.Application.Queries.CreateIllustration;
+using DesignGenerator.Application.Queries.GetAllPrompts;
+using DesignGenerator.Domain;
+using DesignGeneratorUI.ViewModels.ElementsViewModel;
 using DesignGeneratorUI.ViewModels.Navigation;
 using DesignGeneratorUI.Views.Pages;
-using DesignGenerator.Application.Interfaces;
-using DesignGenerator.Application.Queries.CreateIllustration;
-using DesignGenerator.Application.Commands.AddIllustration;
-using DesignGenerator.Application.Queries.Communicate;
-using DesignGenerator.Application;
-using CommunityToolkit.Mvvm.Input;
-using DesignGenerator.Domain;
-using DesignGenerator.Application.Queries.GetAllPrompts;
+using Microsoft.Extensions.Configuration;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Runtime.CompilerServices;
-using CommunityToolkit.Mvvm.Messaging;
+using static Yandex.Cloud.Serverless.Triggers.V1.Trigger.Types;
+using ICommand = System.Windows.Input.ICommand;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
+    // TODO: Выделение текста не меняет значение промпта у _visualParametersVM. Функция выделения стала околобесполезной
+    // TODO: Добавить генерацию нескольких изображений по промпту.
+    // TODO: Добавить возможность отключения параметров
     public class MainInteractionPageViewModel : BaseViewModel
     {
         private string _saveFolder;
@@ -25,7 +29,6 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private bool _isSelectionMode;
         private string? _imageTitle;
         private string? _imageDescription;
-        private string? _workingStatus;
         private bool _canGenerateImages;
         private string? _generatedImagePath;
         private string? _selectedText;
@@ -75,16 +78,6 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             {
                 _imageDescription = value;
                 OnPropertyChanged(nameof(ImageDescription));
-            }
-        }
-
-        public string? WorkingStatus
-        {
-            get => _workingStatus;
-            set
-            {
-                _workingStatus = value;
-                OnPropertyChanged(nameof(WorkingStatus));
             }
         }
 
@@ -198,27 +191,34 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         {
             if (!string.IsNullOrWhiteSpace(UserInput))
             {
-                Messages.Add(new ChatMessageViewModel { Text = UserInput, IsBotMessage = false });
-                var processingMessage = new ChatMessageViewModel { Text = "Processing...", IsBotMessage = true };
-                Messages.Add(processingMessage);
+                PostMessage(UserInput, false);
+                var processingMessage = PostMessage("Processing...", true);
 
-                var message = new ChatMessageViewModel { IsBotMessage = true };
-
-                var imbeddedString = "Your response must be in the following format:\r\n\r\nTitle: [Title]\r\nPrompt: [Prompt]";
                 var communicateQuery = new CommunicateQuery
                 {
-                    Query = UserInput + imbeddedString
+                    Query = UserInput
                 };
 
                 var response = await Task.Run(() => 
                     _queryDispatcher.Send<CommunicateQuery, CommunicateQueryResponse>(communicateQuery));
 
-                message.Text = response.Message;
-
                 Messages.Remove(processingMessage);
-                Messages.Add(message);
-                UserInput = string.Empty;
+                PostMessage(response.Message, true);
+
+                ClearUserInput();
             }
+        }
+
+        private void ClearUserInput()
+        {
+            UserInput = string.Empty;
+        }
+
+        private ChatMessageViewModel PostMessage(string messageText, bool isBotMessage)
+        {
+            var message = new ChatMessageViewModel { Text = messageText, IsBotMessage = isBotMessage };
+            Messages.Add(message);
+            return message;
         }
 
         private void OnTextSelected(string? parameter)
@@ -228,18 +228,9 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                 IllustrationTemplate imageDescription = _templateParser.ParseOne(selectedText);
                 if (imageDescription != null)
                 {
-                    this.ImageDescription = imageDescription.Prompt;
+                    ImageDescription = imageDescription.Prompt;
                     ImageTitle = imageDescription.Title;
-                    WorkingStatus = "Successfully parsed image description";
                 }
-                else
-                {
-                    WorkingStatus = "Couldn't parse image description";
-                }
-            }
-            else
-            {
-                WorkingStatus = "Selected text was not recognized";
             }
         }
 
@@ -254,7 +245,6 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         private async Task GenerateImage()
         {
-            WorkingStatus = "Image creating in progress";
             CanGenerateImages = false;
             string fullFolderPath = _saveFolder + "\\" + ImageTitle;
 
@@ -276,7 +266,6 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             await Task.Run(() => _commandDispatcher.Send(addCommand));
 
             CanGenerateImages = true;
-            WorkingStatus = "Image creating completed";
         }
 
         private void GenerateMultipleImages()
@@ -293,6 +282,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                     illustrationTemplates.Add(template);
                 }
             }
+
             IllustrationTemplatesContainer.GetInstance().IllustrastionsTemplates = illustrationTemplates;
             _navigationService.NavigateTo<DescriptionsViewerPage>();
         }

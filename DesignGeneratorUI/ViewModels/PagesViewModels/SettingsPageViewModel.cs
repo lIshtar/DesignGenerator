@@ -1,5 +1,5 @@
 ﻿using DesignGenerator.Application;
-using DesignGenerator.Application.Exceptions;
+using DesignGenerator.Exceptions.Application;
 using DesignGenerator.Application.Settings;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -12,10 +12,20 @@ using System.Windows.Input;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
+    /// <summary>
+    /// ViewModel for the Settings Page of the application.
+    /// Provides data binding for settings such as API keys, selected model,
+    /// and image save directory. Also handles user interactions like browsing for folders.
+    /// </summary>
     public class SettingsPageViewModel : BaseViewModel
     {
+        // Service responsible for managing and persisting application settings.
         private SettingsService _settingsService;
 
+        /// <summary>
+        /// Gets or sets the path to the directory where images are saved.
+        /// Updates the settings service and notifies the UI of changes.
+        /// </summary>
         public string ImageSaveDirectory
         {
             get => _settingsService.ImageSaveDirectory;
@@ -26,6 +36,9 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the API key used for text-based AI services.
+        /// </summary>
         public string TextApiKey
         {
             get => _settingsService.TextApiKey;
@@ -36,6 +49,9 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the API key used for visual (image generation) AI services.
+        /// </summary>
         public string VisualApiKey
         {
             get => _settingsService.VisualApiKey;
@@ -46,11 +62,18 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
+        /// <summary>
+        /// A list of available model names for selection, bound to a dropdown or similar UI element.
+        /// </summary>
         public ObservableCollection<string> AvailableModels
         {
             get => [.. _settingsService.Models.Select(model => model.Name)];
         }
 
+        /// <summary>
+        /// Gets or sets the name of the currently selected model.
+        /// Automatically updates the underlying selected model in the settings service.
+        /// </summary>
         public string SelectedModel
         {
             get => _settingsService.SelectedModel.Name;
@@ -64,8 +87,15 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
+        /// <summary>
+        /// Command used to open a folder browser dialog and update the image save directory.
+        /// </summary>
         public ICommand BrowsePathCommand { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the SettingsPageViewModel class with the specified settings service.
+        /// </summary>
+        /// <param name="settingsService">The service used to manage application settings.</param>
         public SettingsPageViewModel(SettingsService settingsService)
         {
             _settingsService = settingsService;
@@ -73,6 +103,9 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             BrowsePathCommand = new RelayCommand(BrowsePath);
         }
 
+        /// <summary>
+        /// Opens a folder browser dialog and sets the selected path as the image save directory.
+        /// </summary>
         private void BrowsePath()
         {
             var dialog = new FolderBrowserDialog();
@@ -82,6 +115,11 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
+        /// <summary>
+        /// Updates the selected model in the settings service based on its name.
+        /// Throws an exception if the specified model is not found.
+        /// </summary>
+        /// <param name="name">The name of the model to select.</param>
         private void SetSelectedModelByName(string name)
         {
             var model = _settingsService.Models

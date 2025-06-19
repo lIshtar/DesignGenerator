@@ -10,8 +10,6 @@ using DesignGeneratorUI.ViewModels.ElementsViewModel;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
-    // TODO: добавить кнопку: показать альтернативы. (смотреть в папку)
-    // TODO: Возможность выбора лучшего изображения из папки?
     public partial class ImageViewerPageViewModel : BaseViewModel
     {
         private CreatedIllustrationViewModel _selectedIllustration;

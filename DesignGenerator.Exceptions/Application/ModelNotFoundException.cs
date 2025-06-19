@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DesignGenerator.Application.Exceptions
+namespace DesignGenerator.Exceptions.Application
 {
     public class ModelNotFoundException : AppConfigurationException
     {

@@ -1,4 +1,4 @@
-﻿using DesignGenerator.Application.Exceptions;
+﻿using DesignGenerator.Exceptions.Application;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
