@@ -58,25 +58,40 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             var command = new GetUnreviewedIllustrationsQuery();
             var response = await _queryDispatcher.Send<GetUnreviewedIllustrationsQuery, GetUnreviewedIllustrationsQueryResponse>(command);
             _illustrations = response.Illustrations;
-            if (_illustrations.Count > 0 && _illustrationIndex < _illustrations.Count)
+
+            if (IsIndexLegal())
             {
                 var current = _illustrations[_illustrationIndex];
-                SelectedIllustration = new CreatedIllustrationViewModel
-                {
-                    Title = current.Title,
-                    Prompt = current.Prompt,
-                    IllustrationPath = current.IllustrationPath,
-                };
+                SelectNewIllustration(current);
             }
             else
             {
-                SelectedIllustration = new CreatedIllustrationViewModel
-                {
-                    Title = "Больше нечего проверять",
-                    Prompt = "",
-                    IllustrationPath = "C:\\Users\\Ishtar\\Институт\\Диплом\\DesignGeneratorUI\\DesignGeneratorUI\\Images\\DefaultImage.png",
-                };
+                SelectDefaultIlustration();
             }
+        }
+
+        private bool IsIndexLegal() => 
+            _illustrations is not null && 
+            _illustrations.Count > 0 && 
+            _illustrationIndex < _illustrations.Count;
+
+        private void SelectNewIllustration(Illustration illustration)
+        {
+            SelectedIllustration = new CreatedIllustrationViewModel
+            {
+                Title = illustration.Title,
+                Prompt = illustration.Prompt,
+                IllustrationPath = illustration.IllustrationPath,
+            };
+        }
+        private void SelectDefaultIlustration()
+        {
+            SelectedIllustration = new CreatedIllustrationViewModel
+            {
+                Title = "Больше нечего проверять",
+                Prompt = "",
+                IllustrationPath = "C:\\Users\\Ishtar\\Институт\\Диплом\\DesignGeneratorUI\\DesignGeneratorUI\\Images\\DefaultImage.png",
+            };
         }
 
         private async Task NextImage()
@@ -97,12 +112,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
             var current = _illustrations[_illustrationIndex];
 
-            SelectedIllustration = new CreatedIllustrationViewModel
-            {
-                Title = current.Title,
-                Prompt = current.Prompt,
-                IllustrationPath = current.IllustrationPath,
-            };
+            SelectNewIllustration(current);
         }
 
         private async Task RegenerateImage()

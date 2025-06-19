@@ -31,7 +31,8 @@ namespace DesignGeneratorUI.ViewModels.ElementsViewModel
                 _isSelectable = value;
                 OnPropertyChanged(nameof(IsSelectable));
             }
-        } // Для отображения чекбоксов
+        }
+
         public bool IsSelected
         {
             get => _isSelected;

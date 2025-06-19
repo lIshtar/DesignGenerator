@@ -1,27 +1,54 @@
 ﻿using DesignGenerator.Domain.Interfaces.ImageGeneration;
+using DesignGenerator.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DesignGenerator.Infrastructure.AICommunicators.StableDiffusion
+namespace DesignGenerator.Infrastructure.ImageGeneration.StableDiffusion
 {
+    /// <summary>
+    /// Implements the IImageGenerationClient interface for Stable Diffusion.
+    /// Delegates request construction and API communication to injected components.
+    /// </summary>
     public class StableDiffusionClient : IImageGenerationClient
     {
+        /// <summary>
+        /// The display name of this model.
+        /// </summary>
         public string Name => "Stable Diffusion";
+
+        /// </summary>
+        /// The list of default parameter descriptors supported by Stable Diffusion.
+        /// </summary>
         public IEnumerable<ParameterDescriptor> DefaultParams { get; private set; }
 
-        public StableDiffusionClient()
+        private readonly StableDiffusionRequestBuilder _requestBuilder;
+        private readonly StableDiffusionApiClient _apiClient;
+
+        /// <summary>
+        /// Constructor that injects dependencies.
+        /// </summary>
+        public StableDiffusionClient(StableDiffusionRequestBuilder requestBuilder, StableDiffusionApiClient apiClient)
         {
+            _requestBuilder = requestBuilder;
+            _apiClient = apiClient;
             InitializeParams();
         }
 
-        public Task<string> GenerateAsync(IImageGenerationParams parameters)
+        /// <summary>
+        /// Generates an image from the given parameters.
+        /// </summary>
+        public async Task<ImageData> GenerateAsync(IImageGenerationParams parameters)
         {
-            throw new NotImplementedException();
+            var payload = _requestBuilder.Build(parameters);
+            return await _apiClient.GenerateImageAsync(payload);
         }
 
+        /// <summary>
+        /// Initializes the default set of parameters expected by the Stable Diffusion API.
+        /// </summary>
         private void InitializeParams()
         {
             DefaultParams = new List<ParameterDescriptor>

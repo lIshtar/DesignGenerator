@@ -1,5 +1,4 @@
-﻿
-using DesignGenerator.Domain.Interfaces.ImageGeneration;
+﻿using DesignGenerator.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

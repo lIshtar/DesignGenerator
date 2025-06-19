@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DesignGenerator.Domain.Interfaces.ImageGeneration
+namespace DesignGenerator.Domain.Models
 {
     /// <summary>
     /// Describes a parameter that can be dynamically rendered and configured in the UI,
@@ -36,6 +36,11 @@ namespace DesignGenerator.Domain.Interfaces.ImageGeneration
         /// The default value to use when the parameter is not specified by the user.
         /// </summary>
         public object? DefaultValue { get; set; }
+
+        /// <summary>
+        /// The value processed to api
+        /// </summary>
+        public object? Value { get; set; } = null;
 
         /// <summary>
         /// Indicates whether this parameter is required for the generation API.

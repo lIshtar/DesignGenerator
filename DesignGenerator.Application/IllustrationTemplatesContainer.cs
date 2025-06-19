@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace DesignGenerator.Application
 {
+    // TODO: ну вот это фиговое решение, конечно. Убрать singleton. Переработать использование
     public class IllustrationTemplatesContainer
     {
         public static IllustrationTemplatesContainer GetInstance()

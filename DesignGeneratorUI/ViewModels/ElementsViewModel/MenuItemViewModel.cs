@@ -14,7 +14,7 @@ namespace DesignGeneratorUI.ViewModels
     {
         public string? Title { get; }
         private readonly Func<Page> _pageFactory;
-        private Page _cachedPage;
+        private Page? _cachedPage;
         public Page Page => _cachedPage ??= _pageFactory();
         public ImageSource? Icon { get; }
 

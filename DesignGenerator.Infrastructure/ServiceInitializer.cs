@@ -1,10 +1,11 @@
 ﻿using DesignGenerator.Application.Interfaces;
 using DesignGenerator.Domain.Interfaces.ImageGeneration;
 using DesignGenerator.Infrastructure.AICommunicators;
-using DesignGenerator.Infrastructure.AICommunicators.StableDiffusion;
 using DesignGenerator.Infrastructure.Database;
 using DesignGenerator.Infrastructure.Database.DBEntities;
 using DesignGenerator.Infrastructure.DBEntities;
+using DesignGenerator.Infrastructure.ImageGeneration.StableDiffusion;
+using DesignGenerator.Infrastructure.IO;
 using DesignGenerator.Infrastructure.Mappers;
 using DesignGenerator.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -21,9 +22,7 @@ namespace DesignGenerator.Infrastructure
     {
         public static IServiceCollection InitializeServices(this IServiceCollection services)
         {
-            services.AddTransient<IImageAICommunicator, GetImgConnector>();
             services.AddTransient<ITextAICommunicator, GptConnector>();
-            services.AddSingleton<IImageDownloader, ImageDownloader>();
 
             services.AddTransient<IRepository<Illustration>, IllustrationRepository>();
             services.AddTransient<IRepositoryService<Domain.Illustration>, IllustrationRepositoryService>();
@@ -40,12 +39,12 @@ namespace DesignGenerator.Infrastructure
             services.AddAutoMapper(typeof(PromptProfile));
             services.AddAutoMapper(typeof(MessageProfile));
 
-            var visualAIList = new List<IImageGenerationClient>
-            {
-                new StableDiffusionClient(),
-            };
+            services.AddTransient<IImageGenerationClient, StableDiffusionClient>();
+            services.AddTransient<StableDiffusionApiClient>();
+            services.AddTransient<StableDiffusionConfig>();
+            services.AddTransient<StableDiffusionRequestBuilder>();
 
-            services.AddTransient<IEnumerable<IImageGenerationClient>>(provider => visualAIList);
+            services.AddTransient<IImageSaver, LocalImageSaver>();
 
             return services;
         }

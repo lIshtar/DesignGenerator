@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DesignGenerator.Application\DesignGenerator.Application.csproj" />
     <ProjectReference Include="..\DesignGenerator.Domain\DesignGenerator.Domain.csproj" />
+    <ProjectReference Include="..\DesignGenerator.Exceptions\DesignGenerator.Exceptions.csproj" />
   </ItemGroup>
 
 </Project>

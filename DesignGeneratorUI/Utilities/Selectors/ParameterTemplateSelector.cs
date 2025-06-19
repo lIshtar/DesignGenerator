@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows;
-using DesignGenerator.Domain.Interfaces.ImageGeneration;
+using DesignGenerator.Domain.Models;
 
 
 namespace DesignGeneratorUI.Utilities.Selectors
