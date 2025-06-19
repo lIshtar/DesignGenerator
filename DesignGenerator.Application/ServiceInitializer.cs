@@ -15,6 +15,8 @@ using DesignGenerator.Application.Commands.AddPrompt;
 using DesignGenerator.Application.Commands.DeletePrompt;
 using DesignGenerator.Application.Commands.UpdatePrompt;
 using DesignGenerator.Application.Queries.GetAllPrompts;
+using DesignGenerator.Application.Messages;
+using DesignGenerator.Application.Settings;
 
 namespace DesignGenerator.Application
 {
@@ -38,6 +40,12 @@ namespace DesignGenerator.Application
             services.AddTransient<IQueryHandler<GetAllPromptsQuery, GetAllPromptsResponse>, GetAllPromptsQueryHandler>();
 
             services.AddTransient<ITemplateParser, IllustrationTemplateJsonParser>();
+
+            // Регистрируем сервисы настроек
+            services.AddSingleton<ApiKeysService>();
+            services.AddSingleton<DirectoriesService>();
+            services.AddSingleton<ModelSelectionService>();
+            services.AddSingleton<SettingsService>();
 
             services.AddAutoMapper(typeof(AddIllustrationCommandProfile));
             services.AddAutoMapper(typeof(GetUnreviewedIllustrationsQueryResponseProfile));

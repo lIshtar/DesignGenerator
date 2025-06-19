@@ -9,43 +9,45 @@ using System.Threading.Tasks;
 
 namespace DesignGenerator.Infrastructure.AICommunicators
 {
-    //public class YandexARTConnector : IImageAICommunicator
-    //{
-    //    private readonly string _authorizationKey = "AQVN3KeParxh1AMzCRxddy1Osor_I5erS3o8zUlK";
-    //    private readonly HttpClient _httpClient = new HttpClient();
-    //    public async Task<string> GetImageUrlAsync(string query)
-    //    {
-    //        var url = "https://example.com/api/data";
+    public class YandexARTConnector : IImageAICommunicator
+    {
+        private readonly string _authorizationKey = "AQVN3KeParxh1AMzCRxddy1Osor_I5erS3o8zUlK";
+        private readonly HttpClient _httpClient = new HttpClient();
+        public async Task<string> GetImageUrlAsync(string query)
+        {
+            throw new NotImplementedException();
 
-    //        // Define the payload
-    //        var payload = new
-    //        {
-    //            Name = "John Doe",
-    //            Email = "john.doe@example.com"
-    //        };
+            var url = "https://example.com/api/data";
 
-    //        // Serialize payload to JSON using Newtonsoft.Json
-    //        var json = JsonConvert.SerializeObject(payload);
+            // Define the payload
+            var payload = new
+            {
+                Name = "John Doe",
+                Email = "john.doe@example.com"
+            };
 
-    //        var content = new StringContent(json, Encoding.UTF8, "application/json");
+            // Serialize payload to JSON using Newtonsoft.Json
+            var json = JsonConvert.SerializeObject(payload);
 
-    //        // Add custom headers
-    //        _httpClient.DefaultRequestHeaders.Clear();
-    //        _httpClient.DefaultRequestHeaders.Add("X-Custom-Header", "MyHeaderValue");
-    //        _httpClient.DefaultRequestHeaders.Add("X-Request-ID", Guid.NewGuid().ToString());
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-    //        try
-    //        {
-    //            var response = await _httpClient.PostAsync(url, content);
-    //            response.EnsureSuccessStatusCode();
+            // Add custom headers
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Add("X-Custom-Header", "MyHeaderValue");
+            _httpClient.DefaultRequestHeaders.Add("X-Request-ID", Guid.NewGuid().ToString());
 
-    //            var responseBody = await response.Content.ReadAsStringAsync();
-    //            Console.WriteLine("Response: " + responseBody);
-    //        }
-    //        catch (HttpRequestException ex)
-    //        {
-    //            Console.WriteLine("Error sending POST request: " + ex.Message);
-    //        }
-    //    }
-    //}
+            try
+            {
+                var response = await _httpClient.PostAsync(url, content);
+                response.EnsureSuccessStatusCode();
+
+                var responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Response: " + responseBody);
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine("Error sending POST request: " + ex.Message);
+            }
+        }
+    }
 }
