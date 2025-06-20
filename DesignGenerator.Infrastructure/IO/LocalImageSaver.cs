@@ -1,6 +1,8 @@
-﻿using DesignGenerator.Application.Interfaces.ImageGeneration;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using DesignGenerator.Application.Interfaces.ImageGeneration;
 using DesignGenerator.Domain.Interfaces.ImageGeneration;
 using DesignGenerator.Exceptions.Application;
+using DesignGenerator.Application.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,16 +18,22 @@ namespace DesignGenerator.Infrastructure.IO
     /// </summary>
     public class LocalImageSaver : IImageSaver
     {
-        private readonly string _saveDirectory;
+        private string _saveDirectory;
         private readonly IImageDataResolver _resolver;
 
         /// <summary>
         /// Initializes a new instance with a target save directory and a resolver.
         /// </summary>
-        public LocalImageSaver(string saveDirectory, IImageDataResolver resolver)
+        public LocalImageSaver(IImageDataResolver resolver, IMessenger messenger)
+        {
+            messenger.Register<ImageSaveDirectoryChangedMessage>(this, (s, m) => ReloadSaveDirectory(m.Value));
+
+            _resolver = resolver;
+        }
+
+        private void ReloadSaveDirectory(string saveDirectory)
         {
             _saveDirectory = saveDirectory;
-            _resolver = resolver;
         }
 
         /// <summary>

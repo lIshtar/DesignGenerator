@@ -63,7 +63,7 @@ public class ApiKeysService
     /// </summary>
     private void InitializeKeys()
     {
-        _visualApiKey = _config.GetRequiredValue(visualApiKeyConfig);
-        _textApiKey = _config.GetRequiredValue(textApiKeyConfig);
+        VisualApiKey = _config.GetRequiredValue(visualApiKeyConfig);
+        TextApiKey = _config.GetRequiredValue(textApiKeyConfig);
     }
 }

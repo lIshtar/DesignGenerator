@@ -1,4 +1,5 @@
 ﻿using DesignGenerator.Domain.Interfaces.ImageGeneration;
+using DesignGenerator.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace DesignGenerator.Application.Interfaces.ImageGeneration
         /// <param name="client">The image generation client (e.g., Stable Diffusion) to use.</param>
         /// <param name="parameters">The parameters that define how the image should be generated.</param>
         /// <returns>The file path or reference to the saved image.</returns>
-        Task<string> GenerateAndSaveAsync(IImageGenerationClient client, IImageGenerationParams parameters);
+        Task<string> GenerateAndSaveAsync(IImageGenerationParams parameters);
+        Task<string> GenerateAndSaveAsync(IEnumerable<ParameterDescriptor> parameters);
     }
 }

@@ -3,10 +3,12 @@ using CommunityToolkit.Mvvm.Messaging;
 using DesignGenerator.Application;
 using DesignGenerator.Application.Commands.AddIllustration;
 using DesignGenerator.Application.Interfaces;
+using DesignGenerator.Application.Interfaces.ImageGeneration;
 using DesignGenerator.Application.Queries.Communicate;
 using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Queries.GetAllPrompts;
 using DesignGenerator.Domain;
+using DesignGenerator.Domain.Models;
 using DesignGeneratorUI.ViewModels.ElementsViewModel;
 using DesignGeneratorUI.ViewModels.Navigation;
 using DesignGeneratorUI.Views.Pages;
@@ -118,6 +120,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private IQueryDispatcher _queryDispatcher;
         private ITemplateParser _templateParser;
         private IMessenger _messenger;
+        private IImageGenerationCoordinator _imageGenerationCoordinator;
 
         public MainInteractionPageViewModel(
             ICommandDispatcher commandDispatcher,
@@ -125,13 +128,15 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             IConfiguration configuration,
             INavigationService navigationService,
             ITemplateParser templateParser,
-            IMessenger messenger)
+            IMessenger messenger,
+            IImageGenerationCoordinator imageGenerationCoordinator)
         {
             _navigationService = navigationService;
             _commandDispatcher = commandDispatcher;
             _queryDispatcher = queryDispatcher;
             _templateParser = templateParser;
             _messenger = messenger;
+            _imageGenerationCoordinator = imageGenerationCoordinator;
 
             Initialize(configuration);
         }
@@ -246,26 +251,31 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         private async Task GenerateImage()
         {
             CanGenerateImages = false;
-            string fullFolderPath = _saveFolder + "\\" + ImageTitle;
 
-            var createCommand = new CreateIllustrationQuery
-            {
-                Prompt = ImageDescription,
-                FolderPath = fullFolderPath
-            };
-            var response = await Task.Run(() => _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand));
-            GeneratedImagePath = response.IllustrationPath;
+            var parametersDescriptors = _visualParametersVM.Parameters.Select(p => p.CreateParameterDescriptor());
+            string imagePath = await _imageGenerationCoordinator.GenerateAndSaveAsync(parametersDescriptors);
+            GeneratedImagePath = imagePath;
 
+            var prompt = GetParameterValueByDisplayName(_visualParametersVM.Parameters, "Prompt");
             var addCommand = new AddIllustrationCommand
             {
                 Title = ImageTitle,
-                Prompt = ImageDescription,
-                IllustrationPath = response.IllustrationPath,
+                Prompt = prompt ?? throw new Exception("Could not find prompt of image"),
+                IllustrationPath = imagePath,
                 IsReviewed = true
             };
             await Task.Run(() => _commandDispatcher.Send(addCommand));
 
             CanGenerateImages = true;
+        }
+
+        private string? GetParameterValueByDisplayName(IEnumerable<ParameterViewModel> parameters, string displayName)
+        {
+            var parameter = parameters.FirstOrDefault(p => p.DisplayName == displayName);
+            if (parameter == null || parameter.Value == null)
+                throw new Exception($"Parameter with display name '{displayName}' was not found.");
+
+            return parameter.Value.ToString();
         }
 
         private void GenerateMultipleImages()

@@ -46,7 +46,7 @@ namespace DesignGenerator.Application.Settings
         /// </summary>
         private void InitializeDirectories()
         {
-            _imageSaveDirectory = _config.GetRequiredValue(defaultImageSaveDirectoryConfig);
+            ImageSaveDirectory = _config.GetRequiredValue(defaultImageSaveDirectoryConfig);
         }
     }
 

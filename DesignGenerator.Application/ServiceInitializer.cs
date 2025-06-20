@@ -76,11 +76,12 @@ namespace DesignGenerator.Application
 
         private static IServiceCollection InitializeImageServices(this IServiceCollection services)
         {
-            services.AddSingleton<IImageDataResolver, ImageDataResolver>();
-            services.AddSingleton<IImageGenerationCoordinator, ImageGenerationCoordinator>();
-            services.AddSingleton<IImageGenerationService, ImageGenerationService>();
-            services.AddSingleton<IUrlToBytesFetcher, UrlToBytesFetcher>();
-            services.AddSingleton<IResponseHandler, JsonResponseHandler>();
+            services.AddTransient<IImageDataResolver, ImageDataResolver>();
+            services.AddTransient<IImageGenerationCoordinator, ImageGenerationCoordinator>();
+            services.AddTransient<IImageGenerationService, ImageGenerationService>();
+            services.AddTransient<IUrlToBytesFetcher, UrlToBytesFetcher>();
+            services.AddTransient<IResponseHandler, JsonResponseHandler>();
+            services.AddTransient<IClientSelector, SettingsClientSelector>();
             return services;
         }
 

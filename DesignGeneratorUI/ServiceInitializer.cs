@@ -58,6 +58,7 @@ namespace DesignGeneratorUI
 
             // Добавляем мессенджер
             services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
+            services.AddHttpClient();
 
             return services;
         }
