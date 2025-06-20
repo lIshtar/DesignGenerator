@@ -33,10 +33,10 @@ namespace DesignGeneratorUI.ViewModels.ElementsViewModel
         /// <param name="generationClient">The client representing the selected image generation model.</param>
         private void ReloadParameters(IImageGenerationClient generationClient)
         {
-            var parameters = generationClient.DefaultParams;
+            var generationParams = generationClient.DefaultParams;
             Parameters.Clear();
 
-            foreach (var parameter in parameters)
+            foreach (var parameter in generationParams.Parameters)
             {
                 Parameters.Add(new ParameterViewModel(parameter));
             }

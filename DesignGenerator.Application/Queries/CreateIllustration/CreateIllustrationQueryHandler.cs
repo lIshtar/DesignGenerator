@@ -26,7 +26,6 @@ namespace DesignGenerator.Application.Queries.CreateIllustration
             var directory = new DirectoryInfo(folderPath);
 
             imageUrl = await _imageAICommunicator.GetImageUrlAsync(command.Prompt);
-            // TODO: Не загружается изображение. Исправить
             // TODO: Возможно переработать бд. Добавить данные об общении с сервисами
             string illustrationPath = await _imageDownloader.DownloadImageAsync(imageUrl, directory);
 

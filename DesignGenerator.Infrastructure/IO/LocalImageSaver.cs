@@ -1,45 +1,49 @@
-﻿using DesignGenerator.Domain.Interfaces.ImageGeneration;
+﻿using DesignGenerator.Application.Interfaces.ImageGeneration;
+using DesignGenerator.Domain.Interfaces.ImageGeneration;
+using DesignGenerator.Exceptions.Application;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DesignGenerator.Infrastructure.IO
 {
-    //// <summary>
-    /// Provides a local implementation of <see cref="IImageSaver"/> that saves image data as a file
-    /// to the specified directory using the provided format.
+    /// <summary>
+    /// Saves resolved image data to the local file system.
+    /// Uses an image data resolver to get image bytes before saving.
     /// </summary>
     public class LocalImageSaver : IImageSaver
     {
         private readonly string _saveDirectory;
+        private readonly IImageDataResolver _resolver;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LocalImageSaver"/> class.
+        /// Initializes a new instance with a target save directory and a resolver.
         /// </summary>
-        /// <param name="saveDirectory">The directory where images will be saved.</param>
-        public LocalImageSaver(string saveDirectory)
+        public LocalImageSaver(string saveDirectory, IImageDataResolver resolver)
         {
             _saveDirectory = saveDirectory;
+            _resolver = resolver;
         }
 
         /// <summary>
-        /// Saves the image bytes to disk in the configured directory.
+        /// Resolves and saves the image to disk.
+        /// Returns the path to the saved file.
         /// </summary>
-        /// <param name="data">An <see cref="ImageData"/> object containing image bytes and format.</param>
-        /// <returns>The full file path of the saved image.</returns>
-        /// <exception cref="ArgumentException">Thrown if the image bytes are null.</exception>
-        public async Task<string> SaveAsync(ImageData data)
+        public async Task<string> SaveAsync(ImageData rawData)
         {
-            if (data.Bytes == null)
-                throw new ArgumentException("Image data is empty.");
+            var imageData = await _resolver.ResolveAsync(rawData);
 
-            var fileName = $"image_{DateTime.Now:yyyyMMdd_HHmmss}.{data.Format}";
+            if (imageData.Bytes == null || imageData.Bytes.Length == 0)
+                throw new EmptyImageBytesException();
 
+            var fileName = $"image_{DateTime.Now:yyyyMMdd_HHmmss}.{imageData.Format}";
             var filePath = Path.Combine(_saveDirectory, fileName);
 
-            await File.WriteAllBytesAsync(filePath, data.Bytes);
+            Directory.CreateDirectory(_saveDirectory);
+            await File.WriteAllBytesAsync(filePath, imageData.Bytes);
 
             return filePath;
         }

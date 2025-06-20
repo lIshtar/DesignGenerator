@@ -20,7 +20,7 @@ namespace DesignGenerator.Domain.Interfaces.ImageGeneration
         /// <summary>
         /// Gets the set of default parameters expected by this client.
         /// </summary>
-        IEnumerable<ParameterDescriptor> DefaultParams { get; }
+        IImageGenerationParams DefaultParams { get; }
 
         /// <summary>
         /// Sends a request to generate an image using the given parameters.
