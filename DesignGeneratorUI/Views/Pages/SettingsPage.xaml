@@ -21,6 +21,9 @@
             <RowDefinition Height="10"/>
             <RowDefinition Height="Auto"/>
             <!-- API-ключ текстовой -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+            <!-- Для параметров -->
         </Grid.RowDefinitions>
 
         <!-- Путь сохранения изображений -->
@@ -63,5 +66,15 @@
             <TextBox Width="400"
                      Text="{Binding TextApiKey}" />
         </StackPanel>
+
+        <ItemsControl ItemsSource="{Binding Parameters}" Grid.Row="8">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <CheckBox IsChecked="{Binding IsVisible}" Content="{Binding DisplayName}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </Page>

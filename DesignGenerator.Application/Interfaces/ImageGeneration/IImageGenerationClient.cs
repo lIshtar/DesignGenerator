@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace DesignGenerator.Domain.Interfaces.ImageGeneration
 {
+    // TODO: надо бы как-то убрать возможность любому изменять DefaultParams
     /// <summary>
     /// Defines a client interface for interacting with a specific image generation model (e.g., Stable Diffusion).
     /// </summary>
@@ -20,7 +21,7 @@ namespace DesignGenerator.Domain.Interfaces.ImageGeneration
         /// <summary>
         /// Gets the set of default parameters expected by this client.
         /// </summary>
-        IImageGenerationParams DefaultParams { get; }
+        IImageGenerationParams DefaultParams { get; set; }
 
         /// <summary>
         /// Sends a request to generate an image using the given parameters.

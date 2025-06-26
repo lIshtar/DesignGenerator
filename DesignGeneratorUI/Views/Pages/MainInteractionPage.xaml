@@ -178,8 +178,7 @@
         <Border Grid.Column="1" Grid.Row="0" Padding="15" Background="White" CornerRadius="10" BorderBrush="#CCC" BorderThickness="1">
             <StackPanel Orientation="Vertical" Margin="10" HorizontalAlignment="Stretch">
                 <TextBlock Text="🖼 Генератор изображений"/>
-                <TextBox Text="{Binding ImageTitle}" ToolTip="Название картинки" HorizontalAlignment="Stretch"/>
-                <controls:DynamicParameterEditor Parameters="{Binding Parameters}" />
+                <controls:DynamicParameterEditor Data="{Binding ParametersVM}" />
                 <Button Content="🎨 Создать изображение" Command="{Binding GenerateImageCommand}" />
                 <Border Width="250" Height="250" Background="#E0E0E0" Margin="0,10,0,0" BorderThickness="1" BorderBrush="#CCC" HorizontalAlignment="Stretch">
                     <Image Source="{Binding GeneratedImagePath}" Stretch="Uniform"/>

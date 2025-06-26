@@ -9,14 +9,14 @@ namespace DesignGenerator.Application.Settings
     /// <summary>
     /// Manages the current image generation model selection and provides a list of all available models.
     /// </summary>
-    public class ModelSelectionService
+    public class ModelSelectionSettings
     {
         private const string defaultImageModelConfig = "Models:DefaultImageModel";
 
         private readonly AppConfiguration _config;
         private readonly IMessenger _messenger;
 
-        private IImageGenerationClient _selectedModel;
+        private IImageGenerationClient _selectedModel  = null!;
         private IEnumerable<IImageGenerationClient> _models;
 
         /// <summary>
@@ -40,10 +40,10 @@ namespace DesignGenerator.Application.Settings
         internal IEnumerable<IImageGenerationClient> Models => _models;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ModelSelectionService"/> class,
+        /// Initializes a new instance of the <see cref="ModelSelectionSettings"/> class,
         /// loading the default model from configuration.
         /// </summary>
-        public ModelSelectionService(
+        public ModelSelectionSettings(
             AppConfiguration configuration,
             IEnumerable<IImageGenerationClient> models,
             IMessenger messenger)
@@ -54,6 +54,9 @@ namespace DesignGenerator.Application.Settings
 
             InitializeSelectedModel();
         }
+
+        public IImageGenerationParams LoadDefaultParameters() =>
+            SelectedModel.DefaultParams;
 
         /// <summary>
         /// Loads the selected model from configuration, or throws if not found.

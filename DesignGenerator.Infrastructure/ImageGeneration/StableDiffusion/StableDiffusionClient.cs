@@ -22,7 +22,7 @@ namespace DesignGenerator.Infrastructure.ImageGeneration.StableDiffusion
         /// </summary>
         /// The list of default parameter descriptors supported by Stable Diffusion.
         /// </summary>
-        public IImageGenerationParams DefaultParams { get; private set; }
+        public IImageGenerationParams DefaultParams { get; set; }
 
         private readonly StableDiffusionRequestBuilder _requestBuilder;
         private readonly StableDiffusionApiClient _apiClient;

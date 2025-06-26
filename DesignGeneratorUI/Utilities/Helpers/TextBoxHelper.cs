@@ -41,7 +41,7 @@ namespace DesignGeneratorUI.Helpers
             }
         }
 
-        // О господи, не смотри на это. Жесточайший гавнокод
+        // О господи, как же лохо это выглядит, но других вариантов нет
         private static void TextBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
             if (sender is TextBox textBox)

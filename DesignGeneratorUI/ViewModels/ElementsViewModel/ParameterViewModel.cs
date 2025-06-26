@@ -23,6 +23,19 @@ namespace DesignGeneratorUI.ViewModels.ElementsViewModel
             }
         }
 
+        public bool IsVisible
+        {
+            get => Descriptor.IsVisible;
+            set
+            {
+                if (Descriptor.IsVisible != value)
+                {
+                    Descriptor.IsVisible = value;
+                    OnPropertyChanged(nameof(IsVisible));
+                }
+            }
+        }
+
         public ParameterViewModel(ParameterDescriptor descriptor)
         {
             Descriptor = descriptor;
@@ -45,7 +58,8 @@ namespace DesignGeneratorUI.ViewModels.ElementsViewModel
                 Tooltip = Tooltip,
                 Type = Type,
                 Options = Options,
-                Value = Value ?? DefaultValue
+                Value = Value ?? DefaultValue,
+                IsVisible = IsVisible
             };
         }
     }

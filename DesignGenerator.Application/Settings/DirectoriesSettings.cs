@@ -6,14 +6,14 @@ namespace DesignGenerator.Application.Settings
     /// <summary>
     /// Manages the configuration of directory paths, such as where generated images are saved.
     /// </summary>
-    public class DirectoriesService
+    public class DirectoriesSettings
     {
         private const string defaultImageSaveDirectoryConfig = "Folders:DefaultImageFolder";
 
         private readonly AppConfiguration _config;
         private readonly IMessenger _messenger;
 
-        private string _imageSaveDirectory;
+        private string _imageSaveDirectory = null!;
 
         /// <summary>
         /// Directory where generated images should be saved.
@@ -31,10 +31,10 @@ namespace DesignGenerator.Application.Settings
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DirectoriesService"/> class
+        /// Initializes a new instance of the <see cref="DirectoriesSettings"/> class
         /// and loads the initial configuration.
         /// </summary>
-        public DirectoriesService(AppConfiguration configuration, IMessenger messenger)
+        public DirectoriesSettings(AppConfiguration configuration, IMessenger messenger)
         {
             _config = configuration;
             _messenger = messenger;

@@ -8,17 +8,15 @@ using System.Threading.Tasks;
 
 namespace DesignGenerator.Application.Settings
 {
-    // TODO: think about better names for settings classes
-
     /// <summary>
     /// Aggregates access to various user-configurable settings such as API keys,
     /// selected models, and directory paths. Acts as a central point of access for the UI.
     /// </summary>
-    public class SettingsService
+    public class SettingsManager
     {
-        private ModelSelectionService _modelSelectionService;
-        private ApiKeysService _apiKeysService;
-        private DirectoriesService _directoriesService;
+        private ModelSelectionSettings _modelSelectionService;
+        private ApiKeysSettings _apiKeysService;
+        private DirectoriesSettings _directoriesService;
 
         /// <summary>
         /// Currently selected model for image generation.
@@ -65,12 +63,12 @@ namespace DesignGenerator.Application.Settings
         }
 
         /// <summary>
-        /// Constructs a new <see cref="SettingsService"/> that aggregates sub-services.
+        /// Constructs a new <see cref="SettingsManager"/> that aggregates sub-services.
         /// </summary>
-        public SettingsService(
-            ModelSelectionService modelSelectionService,
-            ApiKeysService apiKeysService,
-            DirectoriesService directoriesService)
+        public SettingsManager(
+            ModelSelectionSettings modelSelectionService,
+            ApiKeysSettings apiKeysService,
+            DirectoriesSettings directoriesService)
         {
             _apiKeysService = apiKeysService;
             _modelSelectionService = modelSelectionService;

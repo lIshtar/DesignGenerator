@@ -5,34 +5,82 @@ using DesignGeneratorUI.ViewModels.Navigation;
 using DesignGeneratorUI.Views.Pages;
 using System.Collections.ObjectModel;
 using DesignGenerator.Application;
+using CommunityToolkit.Mvvm.Messaging;
+using DesignGeneratorUI.Messages;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
+
+    // TODO: Пока что не тестировал переделай класс, нужно проверить, что все работает корректно
     public class DescriptionsViewerPageViewModel : BaseViewModel
     {
-        public ObservableCollection<IllustrationTemplate> DataItems { get; set; }
+        private ObservableCollection<ImageGenerationRequestViewModel> _dataItems;
+        public ObservableCollection<ImageGenerationRequestViewModel> DataItems
+        {
+            get => _dataItems;
+            set
+            {
+                _dataItems = value;
+                _messenger.Send(new TemplatesModifiedMessage(value));
+                OnPropertyChanged(nameof(DataItems));
+            }
+        }
+        public ObservableCollection<FieldVisibilitySelector> FieldVisibilitySelectors { get; set; } = new();
+        public Dictionary<string, bool> IsVisibleSelector = new();
+        
+
+        public ICommand ToggleVisibilityPopupCommand { get; }
+
+        private bool _isPopupOpen;
+
+        public bool IsPopupOpen
+        {
+            get => _isPopupOpen;
+            set => _isPopupOpen = value;
+        }
         public ICommand StartCreationCommand { get; }
         public ICommand ReturnBackCommand { get; }
         public ICommand AddDataCommand { get; }
 
         private readonly INavigationService _navigationService;
-        private readonly IQueryDispatcher _queryDispatcher;
+        private readonly IMessenger _messenger;
 
-        public DescriptionsViewerPageViewModel(INavigationService navigationService, IQueryDispatcher queryDispatcher)
+        public DescriptionsViewerPageViewModel(INavigationService navigationService, IMessenger messenger)
         {
-            _queryDispatcher = queryDispatcher;
             _navigationService = navigationService;
+            _messenger = messenger;
 
-            DataItems = IllustrationTemplatesContainer.GetInstance().IllustrastionsTemplates;
+            DataItems = new();
+            messenger.Register<TemplatesCreatedMessage>(this, (e, m) => ReloadData(m.Value));
 
+            ToggleVisibilityPopupCommand = new RelayCommand(ToggleVisibilityPopup);
             StartCreationCommand = new RelayCommand(StartCreation);
             ReturnBackCommand = new RelayCommand(ReturnBack);
             AddDataCommand = new RelayCommand(AddData);
         }
 
+        private void ToggleVisibilityPopup()
+        {
+            IsPopupOpen = !IsPopupOpen;
+        }
+
+        private void ReloadData(IEnumerable<ImageGenerationRequestViewModel> templates)
+        {
+            DataItems = new(templates);
+
+            FieldVisibilitySelectors.Clear();
+            var parameters = DataItems.First().Params;
+            parameters.Select(x => new FieldVisibilitySelector(x.DisplayName, x.DisplayName == "Prompt"))
+                      .ToList()
+                      .ForEach(FieldVisibilitySelectors.Add);
+
+            IsVisibleSelector.Clear();
+            IsVisibleSelector = FieldVisibilitySelectors.ToDictionary(s => s.Name, s => s.IsVisible);
+        }
+
         private void AddData()
         {
-            DataItems.Add(new IllustrationTemplate());
+            DataItems.Add(new ImageGenerationRequestViewModel());
         }
 
         private void StartCreation()

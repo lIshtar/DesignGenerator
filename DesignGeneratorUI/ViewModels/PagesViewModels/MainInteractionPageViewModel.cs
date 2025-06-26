@@ -4,11 +4,14 @@ using DesignGenerator.Application;
 using DesignGenerator.Application.Commands.AddIllustration;
 using DesignGenerator.Application.Interfaces;
 using DesignGenerator.Application.Interfaces.ImageGeneration;
+using DesignGenerator.Application.Messages;
+using DesignGenerator.Application.Parsers;
 using DesignGenerator.Application.Queries.Communicate;
-using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Queries.GetAllPrompts;
 using DesignGenerator.Domain;
+using DesignGenerator.Domain.Interfaces.ImageGeneration;
 using DesignGenerator.Domain.Models;
+using DesignGeneratorUI.Messages;
 using DesignGeneratorUI.ViewModels.ElementsViewModel;
 using DesignGeneratorUI.ViewModels.Navigation;
 using DesignGeneratorUI.Views.Pages;
@@ -21,26 +24,31 @@ using ICommand = System.Windows.Input.ICommand;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
-    // TODO: Выделение текста не меняет значение промпта у _visualParametersVM. Функция выделения стала околобесполезной
     // TODO: Добавить генерацию нескольких изображений по промпту.
-    // TODO: Добавить возможность отключения параметров
+    // TODO: Изменить подход к взаимодействию с текстовым ИИ. Взять за основу то, что описано для визуальной
+    // TODO: Изменить подход к получению модели генерации изображений. Надо внедрять в классы сервис настроек и в нужный момент извлекать из него вабранную модель генерации изображений.
     public class MainInteractionPageViewModel : BaseViewModel
     {
-        private string _saveFolder;
-        private string? _userInput;
+        private string _userInput = "";
         private bool _isSelectionMode;
-        private string? _imageTitle;
-        private string? _imageDescription;
         private bool _canGenerateImages;
-        private string? _generatedImagePath;
-        private string? _selectedText;
-        private ParametersSetViewModel _visualParametersVM;
+        private string _generatedImagePath = null!;
+        private string _selectedText = "";
+        private ImageGenerationRequestViewModel _parametersVM = null!;
+        public ImageGenerationRequestViewModel ParametersVM
+        {
+            get => _parametersVM;
+            set
+            {
+                _parametersVM = value;
+                OnPropertyChanged(nameof(ParametersVM));
+            }
+        }
 
-        public ObservableCollection<ParameterViewModel> Parameters { get => _visualParametersVM.Parameters; } 
         public ObservableCollection<ChatMessageViewModel> Messages { get; set; } = new();
         public ObservableCollection<Prompt> SavedPrompts { get; set; } = new();
 
-        public string? UserInput
+        public string UserInput
         {
             get => _userInput;
             set
@@ -63,39 +71,19 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
-        public string? ImageTitle
-        {
-            get => _imageTitle;
-            set
-            {
-                _imageTitle = value;
-                OnPropertyChanged(nameof(ImageTitle));
-            }
-        }
-
-        public string? ImageDescription
-        {
-            get => _imageDescription;
-            set
-            {
-                _imageDescription = value;
-                OnPropertyChanged(nameof(ImageDescription));
-            }
-        }
-
         public bool CanGenerateImages
         {
             get => _canGenerateImages;
             set { _canGenerateImages = value; OnPropertyChanged(nameof(CanGenerateImages)); }
         }
 
-        public string? GeneratedImagePath
+        public string GeneratedImagePath
         {
             get => _generatedImagePath;
             set { _generatedImagePath = value; OnPropertyChanged(nameof(GeneratedImagePath)); }
         }
 
-        public string? SelectedText
+        public string SelectedText
         {
             get => _selectedText;
             set
@@ -106,19 +94,19 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
-        public ICommand LoadedCommand { get; private set; }
-        public ICommand TextSelectedCommand { get; private set;  }
-        public ICommand SendMessageCommand { get; private set; }
-        public ICommand ToggleSelectionModeCommand { get; private set; }
-        public ICommand GenerateImageCommand { get; private set; }
-        public ICommand GenerateMultipleImagesCommand { get; private set; }
-        public ICommand InsertPromptCommand { get; private set; }
-        public ICommand NavigateToPromptManagerCommand { get; private set; }
+        public ICommand LoadedCommand { get; private set; } = null!;
+        public ICommand TextSelectedCommand { get; private set; } = null!;
+        public ICommand SendMessageCommand { get; private set; } = null!;
+        public ICommand ToggleSelectionModeCommand { get; private set; } = null!;
+        public ICommand GenerateImageCommand { get; private set; } = null!;
+        public ICommand GenerateMultipleImagesCommand { get; private set; } = null!;
+        public ICommand InsertPromptCommand { get; private set; } = null!;
+        public ICommand NavigateToPromptManagerCommand { get; private set; } = null!;
 
         private INavigationService _navigationService;
         private ICommandDispatcher _commandDispatcher;
         private IQueryDispatcher _queryDispatcher;
-        private ITemplateParser _templateParser;
+        private IllustrationTemplateParser _templateParser;
         private IMessenger _messenger;
         private IImageGenerationCoordinator _imageGenerationCoordinator;
 
@@ -127,7 +115,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             IQueryDispatcher queryDispatcher,
             IConfiguration configuration,
             INavigationService navigationService,
-            ITemplateParser templateParser,
+            IllustrationTemplateParser templateParser,
             IMessenger messenger,
             IImageGenerationCoordinator imageGenerationCoordinator)
         {
@@ -155,12 +143,12 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         private void InitializeVievModels()
         {
-            _visualParametersVM = new ParametersSetViewModel(_messenger);
+            ParametersVM = new();
+            _messenger.Register<ModelSelectionChangedMessage>(this, (r, m) => ReloadParameters(m.Value));
         }
 
         private void InitializeProperties(IConfiguration configuration)
         {
-            _saveFolder = GetImageFolder(configuration);
             GeneratedImagePath = GetDefaultImagePath();
         }
 
@@ -177,6 +165,11 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             NavigateToPromptManagerCommand = new RelayCommand(NavigateToPromptManager);
         }
 
+        private void ReloadParameters(IImageGenerationClient generationClient)
+        {
+            ParametersVM.ReloadParameters(generationClient);
+        }
+
         private async Task<ObservableCollection<Prompt>> LoadPrompts()
         {
             var query = new GetAllPromptsQuery();
@@ -185,33 +178,26 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         }
         private string GetDefaultImagePath() => Directory.GetCurrentDirectory() + "\\Images\\DefaultImage.png";
 
-        private string GetImageFolder(IConfiguration configuration)
-        {
-            return configuration.GetRequiredSection("Folders")
-                    .GetRequiredSection("DefaultImageFolder").Value
-                    ?? throw new Exception("Unable to find DefaultImageFolder in appsettings.json");
-        }
-
         private async Task SendMessage()
         {
-            if (!string.IsNullOrWhiteSpace(UserInput))
+            if (string.IsNullOrWhiteSpace(UserInput))
+                return;
+
+            PostMessage(UserInput, false);
+            var processingMessage = PostMessage("Processing...", true);
+
+            var communicateQuery = new CommunicateQuery
             {
-                PostMessage(UserInput, false);
-                var processingMessage = PostMessage("Processing...", true);
+                Query = UserInput
+            };
 
-                var communicateQuery = new CommunicateQuery
-                {
-                    Query = UserInput
-                };
+            var response = await Task.Run(() =>
+                _queryDispatcher.Send<CommunicateQuery, CommunicateQueryResponse>(communicateQuery));
 
-                var response = await Task.Run(() => 
-                    _queryDispatcher.Send<CommunicateQuery, CommunicateQueryResponse>(communicateQuery));
+            Messages.Remove(processingMessage);
+            PostMessage(response.Message, true);
 
-                Messages.Remove(processingMessage);
-                PostMessage(response.Message, true);
-
-                ClearUserInput();
-            }
+            ClearUserInput();
         }
 
         private void ClearUserInput()
@@ -230,11 +216,20 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         {
             if (parameter is string selectedText)
             {
-                IllustrationTemplate imageDescription = _templateParser.ParseOne(selectedText);
-                if (imageDescription != null)
+                var parsedData = _templateParser.ParseOne(selectedText);
+                ModifyParameter(ParametersVM, parsedData);
+            }
+        }
+
+        private void ModifyParameter(ImageGenerationRequestViewModel requestViewModel, IllustrationTemplate? template)
+        {
+            if (template != null)
+            {
+                requestViewModel.Title = template.Title;
+                var prompt = requestViewModel.Params.FirstOrDefault(p => p.DisplayName == "Prompt");
+                if (prompt != null)
                 {
-                    ImageDescription = imageDescription.Prompt;
-                    ImageTitle = imageDescription.Title;
+                    prompt.Value = template.Prompt;
                 }
             }
         }
@@ -252,14 +247,14 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         {
             CanGenerateImages = false;
 
-            var parametersDescriptors = _visualParametersVM.Parameters.Select(p => p.CreateParameterDescriptor());
+            var parametersDescriptors = ParametersVM.Params.Select(p => p.CreateParameterDescriptor());
             string imagePath = await _imageGenerationCoordinator.GenerateAndSaveAsync(parametersDescriptors);
             GeneratedImagePath = imagePath;
 
-            var prompt = GetParameterValueByDisplayName(_visualParametersVM.Parameters, "Prompt");
+            var prompt = ParametersVM.GetParameterValueByDisplayName("Prompt");
             var addCommand = new AddIllustrationCommand
             {
-                Title = ImageTitle,
+                Title = ParametersVM.Title,
                 Prompt = prompt ?? throw new Exception("Could not find prompt of image"),
                 IllustrationPath = imagePath,
                 IsReviewed = true
@@ -269,32 +264,42 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             CanGenerateImages = true;
         }
 
-        private string? GetParameterValueByDisplayName(IEnumerable<ParameterViewModel> parameters, string displayName)
-        {
-            var parameter = parameters.FirstOrDefault(p => p.DisplayName == displayName);
-            if (parameter == null || parameter.Value == null)
-                throw new Exception($"Parameter with display name '{displayName}' was not found.");
-
-            return parameter.Value.ToString();
-        }
-
+        // TODO: Переработать логику получения illustrationTemplates с учетом ввода ParametersVM
         private void GenerateMultipleImages()
         {
-            var selectedMessages = Messages.Where(x => x.IsSelected).ToList();
-            var illustrationTemplates = IllustrationTemplatesContainer.GetInstance().IllustrastionsTemplates;
-            illustrationTemplates.Clear();
-            foreach (var message in selectedMessages)
+            var selectedMessages = Messages.Where(x => x.IsSelected);
+
+            var illustrationTemplates = ParseMessages(selectedMessages);
+
+            _messenger.Send(new TemplatesCreatedMessage(illustrationTemplates));
+
+            _navigationService.NavigateTo<DescriptionsViewerPage>();
+        }
+
+        private IEnumerable<ImageGenerationRequestViewModel> ParseMessages(IEnumerable<ChatMessageViewModel> messages)
+        {
+            var illustrationTemplates = new List<ImageGenerationRequestViewModel>();
+            foreach (var message in messages)
             {
-                  
                 var templates = _templateParser.ParseMany(message.Text);
                 foreach (var template in templates)
                 {
-                    illustrationTemplates.Add(template);
+                    //illustrationTemplates.Add(new ImageGenerationRequestViewModel
+                    //{
+                    //    Title = template.Title,
+                    //    Params = new ObservableCollection<ParameterViewModel>
+                    //    {
+                    //        new ParameterViewModel(new ParameterDescriptor
+                    //        {
+                    //            DisplayName = "Prompt",
+                    //            Value = template.Prompt
+                    //        })
+                    //    }
+                    //});
+                    //illustrationTemplates.Add(template);
                 }
             }
-
-            IllustrationTemplatesContainer.GetInstance().IllustrastionsTemplates = illustrationTemplates;
-            _navigationService.NavigateTo<DescriptionsViewerPage>();
+            return illustrationTemplates;
         }
 
         private void InsertPrompt(Prompt prompt)

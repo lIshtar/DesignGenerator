@@ -5,7 +5,7 @@ using DesignGenerator.Application.Messages;
 /// <summary>
 /// Manages the storage and notification of API keys used for visual and text-based AI services.
 /// </summary>
-public class ApiKeysService
+public class ApiKeysSettings
 {
     // Configuration keys used to retrieve or store values.
     private const string visualApiKeyConfig = "ApiKeys:Visual";
@@ -48,10 +48,10 @@ public class ApiKeysService
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ApiKeysService"/> class,
+    /// Initializes a new instance of the <see cref="ApiKeysSettings"/> class,
     /// reading keys from configuration and registering messenger events.
     /// </summary>
-    public ApiKeysService(AppConfiguration config, IMessenger messenger)
+    public ApiKeysSettings(AppConfiguration config, IMessenger messenger)
     {
         _config = config;
         _messenger = messenger;

@@ -1,6 +1,9 @@
 ﻿using DesignGenerator.Application;
-using DesignGenerator.Exceptions.Application;
 using DesignGenerator.Application.Settings;
+using DesignGenerator.Domain.Interfaces.ImageGeneration;
+using DesignGenerator.Domain.Models;
+using DesignGenerator.Exceptions.Application;
+using DesignGeneratorUI.ViewModels.ElementsViewModel;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -12,6 +15,7 @@ using System.Windows.Input;
 
 namespace DesignGeneratorUI.ViewModels.PagesViewModels
 {
+    // TODO: Добавить возможность отключения параметров
     /// <summary>
     /// ViewModel for the Settings Page of the application.
     /// Provides data binding for settings such as API keys, selected model,
@@ -20,7 +24,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
     public class SettingsPageViewModel : BaseViewModel
     {
         // Service responsible for managing and persisting application settings.
-        private SettingsService _settingsService;
+        private SettingsManager _settingsService;
 
         /// <summary>
         /// Gets or sets the path to the directory where images are saved.
@@ -87,6 +91,21 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             }
         }
 
+        // TODO: Надо бы исправить такой ужасный подход к получению параметров
+        /// <summary>
+        /// Gets or sets the image generation parameters associated with the currently selected model.
+        /// <summary>
+        //public ObservableCollection<ParameterViewModel> Parameters
+        //{
+        //    get => [.._settingsService.SelectedModel.DefaultParams.Parameters.Select(p => new ParameterViewModel(p))];
+        //    set
+        //    {
+        //        _settingsService.SelectedModel.DefaultParams = new Parameter(value
+        //            .Select(p => p.CreateParameterDescriptor()))
+        //        OnPropertyChanged(nameof(Parameters));
+        //    }
+        //}
+
         /// <summary>
         /// Command used to open a folder browser dialog and update the image save directory.
         /// </summary>
@@ -96,7 +115,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         /// Initializes a new instance of the SettingsPageViewModel class with the specified settings service.
         /// </summary>
         /// <param name="settingsService">The service used to manage application settings.</param>
-        public SettingsPageViewModel(SettingsService settingsService)
+        public SettingsPageViewModel(SettingsManager settingsService)
         {
             _settingsService = settingsService;
 

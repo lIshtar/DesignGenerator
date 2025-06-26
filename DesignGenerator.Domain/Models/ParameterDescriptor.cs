@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace DesignGenerator.Domain.Models
 {
+    // TODO: Добавить Сохранение параметров по умолчанию для каждой модели в БД
     /// <summary>
     /// Describes a parameter that can be dynamically rendered and configured in the UI,
     /// including metadata for its type, display, default value, and constraints.
@@ -66,6 +67,11 @@ namespace DesignGenerator.Domain.Models
         /// Optional increment step used in sliders or numeric inputs.
         /// </summary>
         public double? Step { get; set; }
+
+        /// <summary>
+        /// Indicates whether this parameter should be shown to the user in the UI.
+        /// </summary>
+        public bool IsVisible { get; set; } = true;
     }
 
     /// <summary>

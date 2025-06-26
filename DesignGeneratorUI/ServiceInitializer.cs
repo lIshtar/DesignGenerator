@@ -27,7 +27,6 @@ namespace DesignGeneratorUI
             services.AddSingleton<MainWindow>();
 
             // Добавляем все страницы
-            services.AddSingleton<HomePage>();
             services.AddSingleton<DataPage>();
             services.AddSingleton<MainInteractionPage>();
             services.AddSingleton<GenerationProgressPage>();
@@ -39,7 +38,6 @@ namespace DesignGeneratorUI
 
             // Добавляем все ViewModel страниц
             services.AddSingleton<DataPageViewModel>();
-            services.AddSingleton<HomePageViewModel>();
             services.AddSingleton<MainInteractionPageViewModel>();
             services.AddSingleton<GenerationProgressPageViewModel>();
             services.AddSingleton<DescriptionsViewerPageViewModel>();

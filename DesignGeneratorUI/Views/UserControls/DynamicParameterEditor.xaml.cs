@@ -14,16 +14,16 @@ namespace DesignGeneratorUI.Views.UserControls
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty ParametersProperty =
-        DependencyProperty.Register("Parameters",
-            typeof(IEnumerable<ParameterViewModel>),
+        public static readonly DependencyProperty DataProperty =
+        DependencyProperty.Register("Data",
+            typeof(ImageGenerationRequestViewModel),
             typeof(DynamicParameterEditor),
             new PropertyMetadata(null));
 
-        public IEnumerable<ParameterViewModel> Parameters
+        public ImageGenerationRequestViewModel Data
         {
-            get => (IEnumerable<ParameterViewModel>)GetValue(ParametersProperty);
-            set => SetValue(ParametersProperty, value);
+            get => (ImageGenerationRequestViewModel)GetValue(DataProperty);
+            set => SetValue(DataProperty, value);
         }
     }
 }

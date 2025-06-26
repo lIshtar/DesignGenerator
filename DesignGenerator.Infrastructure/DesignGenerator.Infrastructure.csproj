@@ -27,4 +27,8 @@
     <ProjectReference Include="..\DesignGenerator.Exceptions\DesignGenerator.Exceptions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TextGeneration\" />
+  </ItemGroup>
+
 </Project>

@@ -1,16 +1,22 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:DesignGeneratorUI.Converters">
+    
+    <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    
     <!-- Текстовый параметр -->
     <DataTemplate x:Key="TextParamTemplate">
-        <StackPanel Margin="4">
-            <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding Tooltip}" />
+        <StackPanel Margin="4" 
+                    Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding Tooltip}"/>
             <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </DataTemplate>
 
     <!-- Выпадающий список -->
     <DataTemplate x:Key="DropdownParamTemplate">
-        <StackPanel Margin="4">
+        <StackPanel Margin="4"
+                    Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding Tooltip}" />
             <ComboBox ItemsSource="{Binding Options}"
                   SelectedItem="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
@@ -19,7 +25,8 @@
 
     <!-- Числовой параметр -->
     <DataTemplate x:Key="NumberParamTemplate">
-        <StackPanel Margin="4">
+        <StackPanel Margin="4"
+                    Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding Tooltip}" />
             <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
@@ -27,7 +34,8 @@
 
     <!-- Булев параметр -->
     <DataTemplate x:Key="BoolParamTemplate">
-        <StackPanel Orientation="Horizontal" Margin="4">
+        <StackPanel Orientation="Horizontal" Margin="4"
+                    Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <CheckBox IsChecked="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding Tooltip}" Margin="4,0,0,0" />
         </StackPanel>
@@ -35,7 +43,8 @@
 
     <!-- Числовой параметр с диапазоном (дополнительно, опционально) -->
     <DataTemplate x:Key="SliderParamTemplate">
-        <StackPanel Margin="4">
+        <StackPanel Margin="4"
+                    Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding Tooltip}" />
             <Slider Minimum="{Binding Min}" Maximum="{Binding Max}"
                 Value="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />

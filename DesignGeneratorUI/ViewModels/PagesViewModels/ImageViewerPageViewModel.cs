@@ -1,5 +1,4 @@
 ﻿using DesignGenerator.Application.Commands.AddIllustration;
-using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Interfaces;
 using ICommand = System.Windows.Input.ICommand;
 using CommunityToolkit.Mvvm.Input;
@@ -21,10 +20,10 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             set { _selectedIllustration = value; OnPropertyChanged(nameof(SelectedIllustration)); }
         }
 
-        public ICommand NextImageCommand { get; private set; }
-        public ICommand RegenerateCommand { get; private set; }
-        public ICommand MarkAsReviewedCommand { get; private set; }
-        public ICommand LoadedCommand { get; private set; }
+        public ICommand NextImageCommand { get; private set; } = null!;
+        public ICommand RegenerateCommand { get; private set; } = null!;
+        public ICommand MarkAsReviewedCommand { get; private set; } = null!;
+        public ICommand LoadedCommand { get; private set; } = null!;
 
         private List<Illustration>? _illustrations;
         private int _illustrationIndex = 0;
@@ -120,13 +119,13 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             if (SelectedIllustration.Title == "Больше нечего проверять")
                 return;
 
-            var createCommand = new CreateIllustrationQuery
-            {
-                Prompt = SelectedIllustration.Prompt,
-                FolderPath = SelectedIllustration.IllustrationPath
-            };
-            var response = await _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand);
-            SelectedIllustration.IllustrationPath = response.IllustrationPath;
+            //var createCommand = new CreateIllustrationQuery
+            //{
+            //    Prompt = SelectedIllustration.Prompt,
+            //    FolderPath = SelectedIllustration.IllustrationPath
+            //};
+            //var response = await _queryDispatcher.Send<CreateIllustrationQuery, CreateIllustrationQueryResponse>(createCommand);
+            //SelectedIllustration.IllustrationPath = response.IllustrationPath;
 
             var addCommand = new AddIllustrationCommand
             {

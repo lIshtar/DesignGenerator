@@ -16,8 +16,14 @@
     </UserControl.Resources>
     <Grid>
         <ScrollViewer>
-            <ItemsControl ItemsSource="{Binding Parameters}"
-                      ItemTemplateSelector="{StaticResource ParamTemplateSelector}" />
+            <StackPanel>
+                <StackPanel Margin="4">
+                    <TextBlock Text="Title" />
+                    <TextBox Text="{Binding Data.Title, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding Data.Params, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    ItemTemplateSelector="{StaticResource ParamTemplateSelector}" />
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </UserControl>
