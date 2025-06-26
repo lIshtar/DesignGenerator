@@ -49,7 +49,7 @@ namespace DesignGeneratorUI.ViewModels.ElementsViewModel
         public IEnumerable<string>? Options => Descriptor.Options;
         public object? DefaultValue => Descriptor.DefaultValue;
 
-        public ParameterDescriptor CreateParameterDescriptor()
+        public ParameterDescriptor ToParameterDescriptor()
         {
             return new ParameterDescriptor
             {
@@ -59,6 +59,7 @@ namespace DesignGeneratorUI.ViewModels.ElementsViewModel
                 Type = Type,
                 Options = Options,
                 Value = Value ?? DefaultValue,
+                DefaultValue = DefaultValue,
                 IsVisible = IsVisible
             };
         }

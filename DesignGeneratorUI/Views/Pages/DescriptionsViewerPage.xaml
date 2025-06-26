@@ -21,29 +21,11 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0">
-            <!-- Popup for selecting visible fields -->
-            <Popup IsOpen="{Binding IsPopupOpen}"
-                   StaysOpen="False"
-                   Placement="Bottom"
-                   AllowsTransparency="True"
-                   PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Button}}">
-                <Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="10">
-                    <StackPanel>
-                        <TextBlock Text="Выберите поля для отображения:" FontWeight="Bold"/>
-                        <ItemsControl ItemsSource="{Binding FieldVisibilitySelectors}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <CheckBox Content="{Binding DisplayName}"
-                                              IsChecked="{Binding IsVisible, Mode=TwoWay}"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Border>
-            </Popup>
+
+            
 
             <ScrollViewer>
-                <ItemsControl ItemsSource="{Binding Requests}">
+                <ItemsControl ItemsSource="{Binding DataItems}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="5">
@@ -53,22 +35,13 @@
                                     <ItemsControl ItemsSource="{Binding Params}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <StackPanel Orientation="Horizontal" Margin="0,2">
+                                                <StackPanel Orientation="Horizontal" Margin="0,2"
+                        Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                                                     <TextBlock Text="{Binding DisplayName}" Width="150"/>
                                                     <TextBox Text="{Binding Value, Mode=TwoWay}" Width="200"/>
                                                 </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemContainerStyle>
-                                            <Style TargetType="ContentPresenter">
-                                                <Setter Property="Visibility" Value="{Binding DataContext.IsVisibleSelector[Name], RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                            </Style>
-                                        </ItemsControl.ItemContainerStyle>
                                     </ItemsControl>
                                 </StackPanel>
                             </Border>
@@ -99,7 +72,27 @@
         DockPanel.Dock="Top"
         Margin="5"
         Command="{Binding ToggleVisibilityPopupCommand}"/>
-            
+            <!-- Popup for selecting visible fields -->
+            <Popup IsOpen="{Binding IsPopupOpen}"
+StaysOpen="False"
+Placement="Bottom"
+AllowsTransparency="True"
+PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Button}}">
+                <Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="10">
+                    <StackPanel>
+                        <TextBlock Text="Выберите поля для отображения:" FontWeight="Bold"/>
+                        <ItemsControl ItemsSource="{Binding DataItems[0].Parameters}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox Content="{Binding DisplayName}"
+                           IsChecked="{Binding IsVisible, Mode=TwoWay}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+            </Popup>
+
             <Button Content="Назад"
         Command="{Binding ReturnBackCommand}"/>
             <Button Content="Добавить данные"

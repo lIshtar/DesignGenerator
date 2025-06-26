@@ -25,8 +25,6 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                 OnPropertyChanged(nameof(DataItems));
             }
         }
-        public ObservableCollection<FieldVisibilitySelector> FieldVisibilitySelectors { get; set; } = new();
-        public Dictionary<string, bool> IsVisibleSelector = new();
         
 
         public ICommand ToggleVisibilityPopupCommand { get; }
@@ -51,7 +49,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             _messenger = messenger;
 
             DataItems = new();
-            messenger.Register<TemplatesCreatedMessage>(this, (e, m) => ReloadData(m.Value));
+            messenger.Register<RequestBatchCreatedMessage>(this, (e, m) => ReloadData(m.Value));
 
             ToggleVisibilityPopupCommand = new RelayCommand(ToggleVisibilityPopup);
             StartCreationCommand = new RelayCommand(StartCreation);
@@ -68,19 +66,18 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         {
             DataItems = new(templates);
 
-            FieldVisibilitySelectors.Clear();
-            var parameters = DataItems.First().Params;
-            parameters.Select(x => new FieldVisibilitySelector(x.DisplayName, x.DisplayName == "Prompt"))
-                      .ToList()
-                      .ForEach(FieldVisibilitySelectors.Add);
-
-            IsVisibleSelector.Clear();
-            IsVisibleSelector = FieldVisibilitySelectors.ToDictionary(s => s.Name, s => s.IsVisible);
+            foreach (var item in DataItems)
+            {
+                foreach (var param in item.Parameters)
+                {
+                    param.IsVisible = param.DisplayName == "Prompt";
+                }
+            }
         }
 
         private void AddData()
         {
-            DataItems.Add(new ImageGenerationRequestViewModel());
+            //DataItems.Add(new ImageGenerationRequestViewModel());
         }
 
         private void StartCreation()

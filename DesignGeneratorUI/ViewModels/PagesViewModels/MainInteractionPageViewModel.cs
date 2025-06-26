@@ -226,7 +226,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
             if (template != null)
             {
                 requestViewModel.Title = template.Title;
-                var prompt = requestViewModel.Params.FirstOrDefault(p => p.DisplayName == "Prompt");
+                var prompt = requestViewModel.Parameters.FirstOrDefault(p => p.DisplayName == "Prompt");
                 if (prompt != null)
                 {
                     prompt.Value = template.Prompt;
@@ -247,15 +247,14 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
         {
             CanGenerateImages = false;
 
-            var parametersDescriptors = ParametersVM.Params.Select(p => p.CreateParameterDescriptor());
+            var parametersDescriptors = ParametersVM.ToParameterDescriptors();
             string imagePath = await _imageGenerationCoordinator.GenerateAndSaveAsync(parametersDescriptors);
             GeneratedImagePath = imagePath;
 
-            var prompt = ParametersVM.GetParameterValueByDisplayName("Prompt");
             var addCommand = new AddIllustrationCommand
             {
-                Title = ParametersVM.Title,
-                Prompt = prompt ?? throw new Exception("Could not find prompt of image"),
+                Title = ParametersVM.Title ?? "",
+                Prompt = ParametersVM.Prompt ?? throw new Exception("Could not find prompt of image"),
                 IllustrationPath = imagePath,
                 IsReviewed = true
             };
@@ -273,7 +272,7 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
             _messenger.Send(new TemplatesCreatedMessage(illustrationTemplates));
 
-            _navigationService.NavigateTo<DescriptionsViewerPage>();
+            _navigationService.NavigateTo<BatchGenerationPage>();
         }
 
         private IEnumerable<ImageGenerationRequestViewModel> ParseMessages(IEnumerable<ChatMessageViewModel> messages)

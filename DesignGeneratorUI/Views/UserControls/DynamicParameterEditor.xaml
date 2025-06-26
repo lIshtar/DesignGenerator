@@ -21,7 +21,7 @@
                     <TextBlock Text="Title" />
                     <TextBox Text="{Binding Data.Title, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                 </StackPanel>
-                <ItemsControl ItemsSource="{Binding Data.Params, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                <ItemsControl ItemsSource="{Binding Data.Parameters, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     ItemTemplateSelector="{StaticResource ParamTemplateSelector}" />
             </StackPanel>
         </ScrollViewer>

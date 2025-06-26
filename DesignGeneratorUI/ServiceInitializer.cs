@@ -35,6 +35,7 @@ namespace DesignGeneratorUI
             services.AddSingleton<PromptManagerPage>();
             services.AddSingleton<ImageHistoryPage>();
             services.AddSingleton<SettingsPage>();
+            services.AddSingleton<BatchGenerationPage>();
 
             // Добавляем все ViewModel страниц
             services.AddSingleton<DataPageViewModel>();
@@ -45,6 +46,7 @@ namespace DesignGeneratorUI
             services.AddSingleton<PromptManagerPageViewModel>();
             services.AddSingleton<ImageHistoryPageViewModel>();
             services.AddSingleton<SettingsPageViewModel>();
+            services.AddSingleton<BatchGenerationViewModel>();
 
             // Добавляем все фабрики
             services.AddTransient<IPageFactory, PageFactory>();

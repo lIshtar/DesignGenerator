@@ -18,7 +18,6 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
     {
         private readonly CancellationTokenSource _cts;
         private readonly INavigationService _navigationService;
-        private readonly IQueryDispatcher _queryDispatcher;
         private readonly ICommandDispatcher _commandDispatcher;
         private List<ImageGenerationRequestViewModel> _illustrationsTemplates;
         private IImageGenerationCoordinator _imageGenerationCoordinator;
@@ -58,14 +57,12 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
         public GenerationProgressPageViewModel(
             INavigationService navigationService, 
-            IQueryDispatcher queryDispatcher, 
             ICommandDispatcher commandDispatcher, 
             IConfiguration configuration, 
             IMessenger messenger,
             IImageGenerationCoordinator imageGenerationCoordinator)
         {
             _navigationService = navigationService;
-            _queryDispatcher = queryDispatcher;
             _commandDispatcher = commandDispatcher;
             _imageGenerationCoordinator = imageGenerationCoordinator;
 
@@ -111,9 +108,8 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
                     if (_cts.Token.IsCancellationRequested)
                         break;
 
-                    var parametersVM = _illustrationsTemplates[i].Params;
-                    var parameters = parametersVM
-                        .Select(p => p.CreateParameterDescriptor());
+                    var parametersVM = _illustrationsTemplates[i];
+                    var parameters = parametersVM.ToParameterDescriptors();
                     var imagePath = await _imageGenerationCoordinator.GenerateAndSaveAsync(parameters);
 
                     await SetProgressValue(i + 1);
@@ -123,8 +119,8 @@ namespace DesignGeneratorUI.ViewModels.PagesViewModels
 
                     var addCommand = new AddIllustrationCommand
                     {
-                        Title = _illustrationsTemplates[i].Title,
-                        Prompt = _illustrationsTemplates[i].GetParameterValueByDisplayName("Prompt"),
+                        Title = _illustrationsTemplates[i].Title ?? "",
+                        Prompt = _illustrationsTemplates[i].Prompt ?? throw new Exception("Could not find prompt of image"),
                         IllustrationPath = imagePath,
                         IsReviewed = false,
                     };

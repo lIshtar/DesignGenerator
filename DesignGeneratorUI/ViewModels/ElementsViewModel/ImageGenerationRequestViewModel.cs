@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using DesignGenerator.Application.Messages;
 using DesignGenerator.Domain.Interfaces.ImageGeneration;
+using DesignGenerator.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,31 +18,37 @@ namespace DesignGeneratorUI.ViewModels.ElementsViewModel
     /// </summary>
     public class ImageGenerationRequestViewModel : BaseViewModel
     {
+        public ObservableCollection<ParameterViewModel> Parameters { get; } = new();
+
         private string? _title;
-        private ObservableCollection<ParameterViewModel> _params = new();
-
-        /// <summary>
-        /// Gets or sets the title of the request. 
-        /// Typically used for UI identification or display purposes (e.g., in a list).
-        /// </summary>
-        public string Title
+        public string? Title
         {
-            get { return _title ??= ""; }
-            set { _title = value; OnPropertyChanged(nameof(Title)); }
-        }
-
-        /// <summary>
-        /// Gets or sets the collection of parameter view models that define the request's settings.
-        /// These parameters are typically bound to the UI and editable by the user.
-        /// </summary>
-        public ObservableCollection<ParameterViewModel> Params
-        {
-            get { return _params; }
+            get => _title;
             set
             {
-                _params = value ?? new();
-                OnPropertyChanged(nameof(Params)); 
+                _title = value;
+                OnPropertyChanged(nameof(Title));
             }
+        }
+
+        public string? Prompt
+        {
+            get => Parameters.FirstOrDefault(p => p.Name == "prompt")?.Value?.ToString();
+            set
+            {
+                var promptParam = Parameters.FirstOrDefault(p => p.Name == "prompt");
+                if (promptParam != null)
+                    promptParam.Value = value;
+            }
+        }
+
+
+        public ImageGenerationRequestViewModel() { }
+
+        public ImageGenerationRequestViewModel(IEnumerable<ParameterDescriptor> baseDescriptors)
+        {
+            foreach (var descriptor in baseDescriptors)
+                Parameters.Add(new ParameterViewModel(descriptor));
         }
 
         /// <summary>
@@ -52,21 +59,17 @@ namespace DesignGeneratorUI.ViewModels.ElementsViewModel
         public void ReloadParameters(IImageGenerationClient generationClient)
         {
             var generationParams = generationClient.DefaultParams;
-            Params.Clear();
+            Parameters.Clear();
 
             foreach (var parameter in generationParams.Parameters)
             {
-                Params.Add(new ParameterViewModel(parameter));
+                Parameters.Add(new ParameterViewModel(parameter));
             }
         }
 
-        public string GetParameterValueByDisplayName(string displayName)
+        public IEnumerable<ParameterDescriptor> ToParameterDescriptors()
         {
-            var parameter = Params.FirstOrDefault(p => p.DisplayName == displayName);
-            if (parameter == null || parameter.Value == null)
-                throw new Exception($"Parameter with display name '{displayName}' was not found.");
-
-            return parameter.Value.ToString() ?? "";
+            return Parameters.Select(p => p.ToParameterDescriptor());
         }
     }
 }
