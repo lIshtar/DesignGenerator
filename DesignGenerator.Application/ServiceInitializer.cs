@@ -9,11 +9,9 @@ using DesignGenerator.Application.ImageGeneration;
 using DesignGenerator.Application.Interfaces;
 using DesignGenerator.Application.Interfaces.ImageGeneration;
 using DesignGenerator.Application.Mappers;
-using DesignGenerator.Application.Messages;
 using DesignGenerator.Application.Parsers;
 using DesignGenerator.Application.Queries;
 using DesignGenerator.Application.Queries.Communicate;
-using DesignGenerator.Application.Queries.CreateIllustration;
 using DesignGenerator.Application.Queries.GetAllIllustrations;
 using DesignGenerator.Application.Queries.GetAllPrompts;
 using DesignGenerator.Application.Queries.GetUnreviewedIllustrations;
@@ -33,7 +31,7 @@ namespace DesignGenerator.Application
             services.InitializeImageServices();
             services.InitializeSettingsServices();
 
-            services.AddTransient<ITemplateParser, IllustrationTemplateJsonParser>();
+            services.AddTransient<IllustrationTemplateParser>();
             services.AddTransient<AppConfiguration>();
 
             return services;
@@ -45,7 +43,6 @@ namespace DesignGenerator.Application
             services.AddTransient<IQueryHandler<CommunicateQuery, CommunicateQueryResponse>, CommunicateQueryHandler>();
             services.AddTransient<IQueryHandler<GetAllIllustrationQuery, GetAllIllustrationQueryResponse>, GetAllIllustrationQueryHandler>();
             services.AddTransient<IQueryHandler<GetUnreviewedIllustrationsQuery, GetUnreviewedIllustrationsQueryResponse>, GetUnreviewedIllustrationsQueryHandler>();
-            services.AddTransient<IQueryHandler<CreateIllustrationQuery, CreateIllustrationQueryResponse>, CreateIllustrationQueryHandler>();
             services.AddTransient<IQueryHandler<GetAllPromptsQuery, GetAllPromptsResponse>, GetAllPromptsQueryHandler>();
             return services;
         }
@@ -87,10 +84,10 @@ namespace DesignGenerator.Application
 
         private static IServiceCollection InitializeSettingsServices(this IServiceCollection services)
         {
-            services.AddSingleton<ApiKeysService>();
-            services.AddSingleton<DirectoriesService>();
-            services.AddSingleton<ModelSelectionService>();
-            services.AddSingleton<SettingsService>();
+            services.AddSingleton<ApiKeysSettings>();
+            services.AddSingleton<DirectoriesSettings>();
+            services.AddSingleton<ModelSelectionSettings>();
+            services.AddSingleton<SettingsManager>();
 
             return services;
         }

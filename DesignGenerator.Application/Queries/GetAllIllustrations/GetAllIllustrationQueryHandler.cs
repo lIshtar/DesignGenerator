@@ -1,14 +1,6 @@
 ﻿using AutoMapper;
 using DesignGenerator.Application.Interfaces;
-using DesignGenerator.Application.Queries.CreateIllustration;
-using DesignGenerator.Application.Queries.GetUnreviewedIllustrations;
 using DesignGenerator.Domain;
-using DesignGenerator.Infrastructure.AICommunicators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DesignGenerator.Application.Queries.GetAllIllustrations
 {
